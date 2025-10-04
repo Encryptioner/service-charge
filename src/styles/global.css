@@ -1,0 +1,16 @@
+@import "tailwindcss";
+
+/* Fix cursor for all buttons and interactive elements */
+button,
+[role="button"],
+a,
+[type="button"],
+[type="submit"],
+[type="reset"] {
+  cursor: pointer;
+}
+
+button:disabled,
+[role="button"]:disabled {
+  cursor: not-allowed;
+}
