@@ -72,7 +72,7 @@ export default function BillPreview({
       await new Promise(resolve => setTimeout(resolve, 100));
 
       const canvas = await html2canvas(printRef.current, {
-        scale: 2,
+        scale: 1.5, // Reduced from 2 to lower resolution
         logging: false,
         useCORS: true,
         allowTaint: true,
@@ -84,11 +84,13 @@ export default function BillPreview({
       // Remove the style override
       document.head.removeChild(styleOverride);
 
-      const imgData = canvas.toDataURL('image/png');
+      // Use JPEG format with compression instead of PNG
+      const imgData = canvas.toDataURL('image/jpeg', 0.85); // 85% quality for good balance
       const pdf = new jsPDF({
         orientation: 'portrait',
         unit: 'mm',
         format: 'a4',
+        compress: true, // Enable PDF compression
       });
 
       const pdfWidth = pdf.internal.pageSize.getWidth();
@@ -101,7 +103,7 @@ export default function BillPreview({
 
       pdf.addImage(
         imgData,
-        'PNG',
+        'JPEG',
         imgX,
         imgY,
         imgWidth * ratio,
