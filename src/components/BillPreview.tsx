@@ -28,61 +28,107 @@ export default function BillPreview({
     minute: '2-digit',
   });
 
-  const handleDownloadPDF = async () => {
-    if (!printRef.current) return;
+  const generateCanvas = async () => {
+    if (!printRef.current) return null;
 
+    // Inject CSS to override OKLCH color variables with hex equivalents
+    const styleOverride = document.createElement('style');
+    styleOverride.id = 'pdf-color-override';
+    styleOverride.textContent = `
+      :root, :host {
+        --color-red-600: #dc2626 !important;
+        --color-red-700: #b91c1c !important;
+        --color-yellow-50: #fefce8 !important;
+        --color-yellow-200: #fef08a !important;
+        --color-yellow-300: #fde047 !important;
+        --color-green-600: #16a34a !important;
+        --color-green-700: #15803d !important;
+        --color-blue-50: #eff6ff !important;
+        --color-blue-100: #dbeafe !important;
+        --color-blue-300: #93c5fd !important;
+        --color-blue-400: #60a5fa !important;
+        --color-blue-500: #3b82f6 !important;
+        --color-blue-600: #2563eb !important;
+        --color-blue-700: #1d4ed8 !important;
+        --color-purple-50: #faf5ff !important;
+        --color-purple-600: #9333ea !important;
+        --color-gray-50: #f9fafb !important;
+        --color-gray-100: #f3f4f6 !important;
+        --color-gray-200: #e5e7eb !important;
+        --color-gray-300: #d1d5db !important;
+        --color-gray-400: #9ca3af !important;
+        --color-gray-500: #6b7280 !important;
+        --color-gray-600: #4b5563 !important;
+        --color-gray-700: #374151 !important;
+        --color-gray-900: #111827 !important;
+        --color-black: #000000 !important;
+        --color-white: #ffffff !important;
+      }
+    `;
+    document.head.appendChild(styleOverride);
+
+    // Wait a tick for styles to apply
+    await new Promise(resolve => setTimeout(resolve, 100));
+
+    const canvas = await html2canvas(printRef.current, {
+      scale: 1.5,
+      logging: false,
+      useCORS: true,
+      allowTaint: true,
+      backgroundColor: '#ffffff',
+      removeContainer: false,
+      imageTimeout: 0,
+    });
+
+    // Remove the style override
+    document.head.removeChild(styleOverride);
+
+    return canvas;
+  };
+
+  const getSanitizedFileName = (extension: string) => {
+    let fileName = `service_charge_bill.${extension}`;
+    if (billData.title && billData.title.trim()) {
+      // Remove special characters and replace spaces with underscores
+      const sanitized = billData.title
+        .trim()
+        .replace(/[^\w\s\u0980-\u09FF-]/g, '') // Keep alphanumeric, spaces, and Bangla characters
+        .replace(/\s+/g, '_') // Replace spaces with underscore
+        .substring(0, 50); // Limit length
+      fileName = sanitized ? `${sanitized}.${extension}` : `service_charge_bill.${extension}`;
+    }
+    return fileName;
+  };
+
+  const handleDownloadImage = async () => {
     try {
-      // Inject CSS to override OKLCH color variables with hex equivalents
-      const styleOverride = document.createElement('style');
-      styleOverride.id = 'pdf-color-override';
-      styleOverride.textContent = `
-        :root, :host {
-          --color-red-600: #dc2626 !important;
-          --color-red-700: #b91c1c !important;
-          --color-yellow-50: #fefce8 !important;
-          --color-yellow-200: #fef08a !important;
-          --color-yellow-300: #fde047 !important;
-          --color-green-600: #16a34a !important;
-          --color-green-700: #15803d !important;
-          --color-blue-50: #eff6ff !important;
-          --color-blue-100: #dbeafe !important;
-          --color-blue-300: #93c5fd !important;
-          --color-blue-400: #60a5fa !important;
-          --color-blue-500: #3b82f6 !important;
-          --color-blue-600: #2563eb !important;
-          --color-blue-700: #1d4ed8 !important;
-          --color-purple-50: #faf5ff !important;
-          --color-purple-600: #9333ea !important;
-          --color-gray-50: #f9fafb !important;
-          --color-gray-100: #f3f4f6 !important;
-          --color-gray-200: #e5e7eb !important;
-          --color-gray-300: #d1d5db !important;
-          --color-gray-400: #9ca3af !important;
-          --color-gray-500: #6b7280 !important;
-          --color-gray-600: #4b5563 !important;
-          --color-gray-700: #374151 !important;
-          --color-gray-900: #111827 !important;
-          --color-black: #000000 !important;
-          --color-white: #ffffff !important;
-        }
-      `;
-      document.head.appendChild(styleOverride);
+      const canvas = await generateCanvas();
+      if (!canvas) return;
 
-      // Wait a tick for styles to apply
-      await new Promise(resolve => setTimeout(resolve, 100));
+      // Convert canvas to blob and download as JPEG
+      canvas.toBlob((blob) => {
+        if (!blob) return;
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = getSanitizedFileName('jpg');
+        link.click();
+        URL.revokeObjectURL(url);
+      }, 'image/jpeg', 0.9); // 90% quality for image download
+    } catch (error) {
+      console.error('Error generating image:', error);
+      alert(
+        language === 'en'
+          ? 'Failed to generate image. Please try again.'
+          : 'ছবি তৈরি করতে ব্যর্থ। আবার চেষ্টা করুন।'
+      );
+    }
+  };
 
-      const canvas = await html2canvas(printRef.current, {
-        scale: 1.5, // Reduced from 2 to lower resolution
-        logging: false,
-        useCORS: true,
-        allowTaint: true,
-        backgroundColor: '#ffffff',
-        removeContainer: false,
-        imageTimeout: 0,
-      });
-
-      // Remove the style override
-      document.head.removeChild(styleOverride);
+  const handleDownloadPDF = async () => {
+    try {
+      const canvas = await generateCanvas();
+      if (!canvas) return;
 
       // Use JPEG format with compression instead of PNG
       const imgData = canvas.toDataURL('image/jpeg', 0.85); // 85% quality for good balance
@@ -110,18 +156,7 @@ export default function BillPreview({
         imgHeight * ratio
       );
 
-      // Create filename from bill title, sanitizing for filesystem
-      let fileName = 'service_charge_bill.pdf';
-      if (billData.title && billData.title.trim()) {
-        // Remove special characters and replace spaces with underscores
-        const sanitized = billData.title
-          .trim()
-          .replace(/[^\w\s\u0980-\u09FF-]/g, '') // Keep alphanumeric, spaces, and Bangla characters
-          .replace(/\s+/g, '_') // Replace spaces with underscore
-          .substring(0, 50); // Limit length
-        fileName = sanitized ? `${sanitized}.pdf` : 'service_charge_bill.pdf';
-      }
-      pdf.save(fileName);
+      pdf.save(getSanitizedFileName('pdf'));
     } catch (error) {
       console.error('Error generating PDF:', error);
       alert(
@@ -153,6 +188,21 @@ export default function BillPreview({
               </svg>
               <span className="hidden sm:inline">{t.actions.download}</span>
               <span className="sm:hidden">PDF</span>
+            </button>
+            <button
+              onClick={handleDownloadImage}
+              className="px-3 py-2 text-sm md:px-4 md:text-base bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium flex items-center gap-2"
+            >
+              <svg className="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                />
+              </svg>
+              <span className="hidden sm:inline">{t.actions.downloadImage}</span>
+              <span className="sm:hidden">IMG</span>
             </button>
             <button
               onClick={onClose}

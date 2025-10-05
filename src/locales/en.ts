@@ -50,6 +50,7 @@ export const en = {
     clearAll: 'Clear All',
     preview: 'Preview',
     download: 'Download PDF',
+    downloadImage: 'Download Image',
   },
   preview: {
     title: 'Bill Preview',

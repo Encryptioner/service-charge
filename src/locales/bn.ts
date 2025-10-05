@@ -50,6 +50,7 @@ export const bn = {
     clearAll: 'সব মুছুন',
     preview: 'প্রিভিউ',
     download: 'পিডিএফ ডাউনলোড',
+    downloadImage: 'ছবি ডাউনলোড',
   },
   preview: {
     title: 'বিল প্রিভিউ',
