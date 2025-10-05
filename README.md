@@ -80,7 +80,7 @@ This project supports **two deployment modes**:
 pnpm build:github  # or just pnpm build
 git push origin main
 ```
-Deployed at: `https://ankurmursalin.github.io/service-charge/`
+Deployed at: `https://encryptioner.github.io/service-charge/`
 
 ### Custom Domain
 ```bash
@@ -142,9 +142,9 @@ This project is open source and available under the [MIT License](LICENSE).
 
 **Ankur Mursalin**
 
-- GitHub: [@ankurmursalin](https://github.com/ankurmursalin)
-- LinkedIn: [ankurmursalin](https://linkedin.com/in/ankurmursalin)
-- Twitter: [@ankurmursalin](https://twitter.com/ankurmursalin)
+- [Website](https://encryptioner.github.io/)
+- [LinkedIn](https://www.linkedin.com/in/mir-mursalin-ankur)
+- [Github](https://github.com/Encryptioner)
 
 ## 🙏 Acknowledgments
 
@@ -154,4 +154,3 @@ This project is open source and available under the [MIT License](LICENSE).
 
 ---
 
-Made with ❤️ by Ankur Mursalin

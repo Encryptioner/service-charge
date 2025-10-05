@@ -285,7 +285,10 @@ export default function BillPreview({
             {/* Footer */}
             <div className="mt-8 pt-6 border-t border-gray-300 text-center text-xs text-gray-500">
               <p>
-                Generated from: <a href="https://ankurmursalin.github.io/service-charge/" className="text-blue-600 underline">ankurmursalin.github.io/service-charge</a>
+                {language === 'en' ? 'Generated from' : 'তৈরি হয়েছে'}:{' '}
+                <a href={window.location.href} className="text-blue-600 underline">
+                  {window.location.hostname + window.location.pathname}
+                </a>
               </p>
             </div>
           </div>

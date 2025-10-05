@@ -63,8 +63,6 @@ export const en = {
   },
   footer: {
     createdBy: 'Created by',
-    with: 'with',
-    love: '❤️',
   },
   help: {
     welcome: 'Welcome! This tool helps you create service charge bills for apartment buildings.',

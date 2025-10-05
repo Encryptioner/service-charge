@@ -11,7 +11,7 @@ This project supports two deployment scenarios:
 
 The project is configured for automatic deployment to GitHub Pages.
 
-**Deployment URL:** `https://ankurmursalin.github.io/service-charge/`
+**Deployment URL:** `https://encryptioner.github.io/service-charge/`
 
 ### Steps:
 
@@ -27,7 +27,7 @@ The project is configured for automatic deployment to GitHub Pages.
    - Check the **Actions** tab for deployment status
 
 3. **Verify Deployment:**
-   - Visit: `https://ankurmursalin.github.io/service-charge/`
+   - Visit: `https://encryptioner.github.io/service-charge/`
    - Check service worker registration in DevTools → Application → Service Workers
 
 ### Manual Build (Local Testing)

@@ -13,7 +13,7 @@ const DEPLOY_TARGET = process.env.DEPLOY_TARGET || 'github';
 
 const config = {
   github: {
-    site: 'https://ankurmursalin.github.io',
+    site: 'https://encryptioner.github.io',
     base: '/service-charge/',
   },
   custom: {

@@ -43,48 +43,6 @@ A modern, professional web application for managing apartment building service c
    - Print-optimized layouts
    - Dynamic filename generation
 
-## 📁 Project Structure
-
-```
-flat-service-charge/
-├── growing-gravity/              # Main application
-│   ├── .github/
-│   │   └── workflows/
-│   │       └── deploy.yml        # GitHub Pages deployment
-│   ├── public/
-│   │   └── favicon.svg
-│   ├── src/
-│   │   ├── components/
-│   │   │   ├── BillCalculator.tsx      # Main component
-│   │   │   ├── BillPreview.tsx         # Preview & PDF
-│   │   │   ├── CategoryForm.tsx        # Category input
-│   │   │   └── HelpSection.tsx         # User guide
-│   │   ├── locales/
-│   │   │   ├── en.ts                   # English
-│   │   │   ├── bn.ts                   # Bangla
-│   │   │   └── index.ts
-│   │   ├── pages/
-│   │   │   └── index.astro             # Main page
-│   │   ├── styles/
-│   │   │   └── global.css
-│   │   ├── types/
-│   │   │   └── index.ts                # TypeScript types
-│   │   └── utils/
-│   │       ├── calculations.ts         # Bill logic
-│   │       ├── exampleData.ts          # Sample data
-│   │       └── storage.ts              # LocalStorage
-│   ├── astro.config.mjs                # Astro config
-│   ├── package.json
-│   ├── tailwind.config.js
-│   ├── tsconfig.json
-│   └── README.md
-└── docs/                                # Documentation
-    ├── README.md                        # User guide
-    ├── ARCHITECTURE.md                  # Technical docs
-    ├── DEPLOYMENT.md                    # Deployment guide
-    └── RESPONSIVE_DESIGN.md             # Design docs
-```
-
 ## 🛠 Technologies Used
 
 | Technology | Version | Purpose |
@@ -96,38 +54,6 @@ flat-service-charge/
 | jsPDF | Latest | PDF generation |
 | html2canvas | Latest | HTML to canvas conversion |
 | Vite | Latest | Build tool |
-
-## 🚀 Quick Start
-
-```bash
-cd growing-gravity
-npm install
-npm run dev
-```
-
-Visit `http://localhost:4321` to see the application.
-
-## 📦 Deployment
-
-### GitHub Pages (Configured)
-- Push to `main` branch
-- GitHub Actions automatically deploys
-- Available at: `https://[username].github.io/flat-service-charge/`
-
-### Manual Build
-```bash
-npm run build
-# Output in dist/
-```
-
-## 📊 Project Statistics
-
-- **Total Components**: 4 React components
-- **Languages**: 2 (English, Bangla)
-- **Type Definitions**: Fully typed with TypeScript
-- **Documentation Pages**: 4 comprehensive guides
-- **Responsive Breakpoints**: 5 (default, sm, md, lg, xl)
-- **Build Output**: ~1MB (minified + gzipped)
 
 ## ✨ Highlights
 
@@ -370,6 +296,3 @@ The application successfully solves the problem of creating service charge bills
 **Ready for**: ✅ **PRODUCTION**
 
 ---
-
-Last Updated: October 4, 2024
-Created by: Ankur Mursalin with Claude Code
