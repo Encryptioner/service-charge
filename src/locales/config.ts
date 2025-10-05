@@ -38,7 +38,8 @@ export const AVAILABLE_LANGUAGES: LanguageConfig[] = [
 
 export const DEFAULT_LANGUAGE = 'bn';
 
-export type SupportedLanguage = 'bn' | 'en'; // Add new language codes here
+// Automatically generate SupportedLanguage type from AVAILABLE_LANGUAGES
+export type SupportedLanguage = typeof AVAILABLE_LANGUAGES[number]['code'];
 
 // Helper function to get language config
 export const getLanguageConfig = (code: string): LanguageConfig | undefined => {

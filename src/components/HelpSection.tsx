@@ -1,12 +1,14 @@
-import { translations, type Language } from '../locales';
+import type { SupportedLanguage } from '../locales/config';
+import { getTranslations, getUIMessages } from '../utils/i18n';
 
 interface HelpSectionProps {
-  language: Language;
+  language: SupportedLanguage;
   onClose: () => void;
 }
 
 export default function HelpSection({ language, onClose }: HelpSectionProps) {
-  const t = translations[language];
+  const t = getTranslations(language);
+  const uiMsgs = getUIMessages(language);
 
   return (
     <div className="bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl shadow-lg p-6 mb-6 text-white">
@@ -21,7 +23,7 @@ export default function HelpSection({ language, onClose }: HelpSectionProps) {
             />
           </svg>
           <h2 className="text-xl font-bold">
-            {language === 'en' ? 'Quick Guide' : 'দ্রুত গাইড'}
+            {uiMsgs.quickGuide}
           </h2>
         </div>
         <button

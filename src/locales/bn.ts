@@ -25,6 +25,7 @@ export const bn = {
   category: {
     title: 'সার্ভিস চার্জ বিভাগসমূহ',
     addCategory: 'বিভাগ যোগ করুন',
+    noCategoriesYet: 'এখনও কোনো বিভাগ যোগ করা হয়নি। শুরু করতে "বিভাগ যোগ করুন" ক্লিক করুন।',
     categoryName: 'বিভাগের নাম',
     categoryNamePlaceholder: 'উদাহরণ: বিদ্যুৎ, পানি, নিরাপত্তা',
     billDuration: 'বিলের সময়কাল',

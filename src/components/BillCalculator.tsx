@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
 import type { BillData, ServiceCategory } from '../types';
-import { translations, type Language } from '../locales';
+import type { SupportedLanguage } from '../locales/config';
+import { isLanguageSupported } from '../locales/config';
 import { calculateBillSummary, formatNumber } from '../utils/calculations';
 import { saveBillData, loadBillData } from '../utils/storage';
-import { exampleDataEn, exampleDataBn } from '../utils/exampleData';
+import { getExampleData } from '../utils/exampleData';
+import { getTranslations, getValidationMessages, getConfirmationMessages, getUIMessages } from '../utils/i18n';
 import CategoryForm from './CategoryForm';
 import BillPreview from './BillPreview';
 import HelpSection from './HelpSection';
@@ -12,14 +14,14 @@ import ConfirmModal from './ConfirmModal';
 
 export default function BillCalculator() {
   // Load language from localStorage or default to 'bn' (Bangla)
-  const [language, setLanguage] = useState<Language>('bn');
+  const [language, setLanguage] = useState<SupportedLanguage>('bn');
   const [isClient, setIsClient] = useState(false);
 
   // Initialize language on client side only
   useEffect(() => {
     setIsClient(true);
     const savedLang = localStorage.getItem('preferred-language');
-    if (savedLang === 'en' || savedLang === 'bn') {
+    if (savedLang && isLanguageSupported(savedLang)) {
       setLanguage(savedLang);
     }
   }, []);
@@ -40,7 +42,10 @@ export default function BillCalculator() {
     categories?: { [key: string]: { name?: string; amount?: string } };
   }>({});
 
-  const t = translations[language];
+  const t = getTranslations(language);
+  const validationMsgs = getValidationMessages(language);
+  const confirmMsgs = getConfirmationMessages(language);
+  const uiMsgs = getUIMessages(language);
 
   const handleToggleHelp = () => {
     if (!showHelp) {
@@ -76,14 +81,12 @@ export default function BillCalculator() {
 
     // Validate bill title
     if (!billData.title.trim()) {
-      errors.title = language === 'en' ? 'Bill title is required' : 'বিলের শিরোনাম প্রয়োজন';
+      errors.title = validationMsgs.billTitleRequired;
     }
 
     // Validate number of flats
     if (!billData.numberOfFlats || billData.numberOfFlats < 1) {
-      errors.numberOfFlats = language === 'en'
-        ? 'Number of flats must be at least 1'
-        : 'ফ্ল্যাটের সংখ্যা কমপক্ষে ১ হতে হবে';
+      errors.numberOfFlats = validationMsgs.numberOfFlatsMin;
     }
 
     // Validate categories
@@ -92,13 +95,11 @@ export default function BillCalculator() {
       const catErrors: { name?: string; amount?: string } = {};
 
       if (!category.name.trim()) {
-        catErrors.name = language === 'en' ? 'Category name is required' : 'বিভাগের নাম প্রয়োজন';
+        catErrors.name = validationMsgs.categoryNameRequired;
       }
 
       if (!category.amount || category.amount < 1) {
-        catErrors.amount = language === 'en'
-          ? 'Amount must be at least 1'
-          : 'পরিমাণ কমপক্ষে ১ হতে হবে';
+        catErrors.amount = validationMsgs.amountMin;
       }
 
       if (Object.keys(catErrors).length > 0) {
@@ -181,7 +182,7 @@ export default function BillCalculator() {
   };
 
   const loadExample = () => {
-    const exampleData = language === 'en' ? exampleDataEn : exampleDataBn;
+    const exampleData = getExampleData(language);
     setBillData(exampleData);
     setShowHelp(false);
   };
@@ -226,10 +227,10 @@ export default function BillCalculator() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
                 <span className="hidden sm:inline">
-                  {language === 'en' ? 'Quick Guide' : 'দ্রুত গাইড'}
+                  {uiMsgs.quickGuide}
                 </span>
                 <span className="sm:hidden">
-                  {language === 'en' ? 'Help' : 'সাহায্য'}
+                  {uiMsgs.help}
                 </span>
               </button>
               <button
@@ -240,7 +241,7 @@ export default function BillCalculator() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                 </svg>
                 <span className="hidden sm:inline">{t.actions.loadExample}</span>
-                <span className="sm:hidden">{language === 'en' ? 'Example' : 'উদাহরণ'}</span>
+                <span className="sm:hidden">{uiMsgs.example}</span>
               </button>
               <LanguageSelector currentLanguage={language} onLanguageChange={setLanguage} />
             </div>
@@ -357,9 +358,7 @@ export default function BillCalculator() {
 
           {billData.categories.length === 0 && (
             <p className="text-center text-gray-500 py-8">
-              {language === 'en'
-                ? 'No categories added yet. Click "Add Category" to get started.'
-                : 'এখনও কোনো বিভাগ যোগ করা হয়নি। শুরু করতে "বিভাগ যোগ করুন" ক্লিক করুন।'}
+              {t.category.noCategoriesYet}
             </p>
           )}
         </div>
@@ -471,14 +470,10 @@ export default function BillCalculator() {
         isOpen={showClearConfirm}
         onConfirm={clearAll}
         onCancel={() => setShowClearConfirm(false)}
-        title={language === 'en' ? 'Clear All Data?' : 'সব ডেটা মুছবেন?'}
-        message={
-          language === 'en'
-            ? 'Are you sure you want to clear all data? This action cannot be undone.'
-            : 'আপনি কি নিশ্চিত যে সব ডেটা মুছে ফেলতে চান? এই কাজটি পূর্বাবস্থায় ফেরানো যাবে না।'
-        }
-        confirmText={language === 'en' ? 'Yes, Clear All' : 'হ্যাঁ, সব মুছুন'}
-        cancelText={language === 'en' ? 'Cancel' : 'বাতিল'}
+        title={confirmMsgs.clearAllTitle}
+        message={confirmMsgs.clearAllMessage}
+        confirmText={confirmMsgs.confirmButton}
+        cancelText={confirmMsgs.cancelButton}
         language={language}
       />
 

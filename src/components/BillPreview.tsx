@@ -2,12 +2,13 @@ import { useRef } from 'react';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import type { BillData, BillSummary } from '../types';
-import { translations, type Language } from '../locales';
+import type { SupportedLanguage } from '../locales/config';
+import { getTranslations, getLocaleCode, getUIMessages } from '../utils/i18n';
 import { formatNumber } from '../utils/calculations';
 
 interface BillPreviewProps {
   billData: BillData;
-  language: Language;
+  language: SupportedLanguage;
   summary: BillSummary;
   onClose: () => void;
 }
@@ -18,9 +19,10 @@ export default function BillPreview({
   summary,
   onClose,
 }: BillPreviewProps) {
-  const t = translations[language];
+  const t = getTranslations(language);
+  const uiMsgs = getUIMessages(language);
   const printRef = useRef<HTMLDivElement>(null);
-  const currentDate = new Date().toLocaleString(language === 'en' ? 'en-US' : 'bn-BD', {
+  const currentDate = new Date().toLocaleString(getLocaleCode(language), {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
@@ -117,11 +119,7 @@ export default function BillPreview({
       }, 'image/jpeg', 0.9); // 90% quality for image download
     } catch (error) {
       console.error('Error generating image:', error);
-      alert(
-        language === 'en'
-          ? 'Failed to generate image. Please try again.'
-          : 'ছবি তৈরি করতে ব্যর্থ। আবার চেষ্টা করুন।'
-      );
+      alert(uiMsgs.imageGenerationError);
     }
   };
 
@@ -159,11 +157,7 @@ export default function BillPreview({
       pdf.save(getSanitizedFileName('pdf'));
     } catch (error) {
       console.error('Error generating PDF:', error);
-      alert(
-        language === 'en'
-          ? 'Failed to generate PDF. Please try again.'
-          : 'পিডিএফ তৈরি করতে ব্যর্থ। আবার চেষ্টা করুন।'
-      );
+      alert(uiMsgs.pdfGenerationError);
     }
   };
 
@@ -229,7 +223,7 @@ export default function BillPreview({
                 {t.preview.printedOn}: {currentDate}
               </p>
               <p className="text-xs md:text-sm font-semibold text-blue-600">
-                {language === 'en' ? 'Number of Flats' : 'ফ্ল্যাটের সংখ্যা'}: {billData.numberOfFlats}
+                {uiMsgs.numberOfFlats}: {billData.numberOfFlats}
               </p>
             </div>
 
@@ -302,7 +296,7 @@ export default function BillPreview({
                       className="border border-gray-300 px-4 py-3 text-right"
                     >
                       {t.summary.totalAmount} ({billData.numberOfFlats}{' '}
-                      {language === 'en' ? 'flats' : 'ফ্ল্যাট'}):
+                      {uiMsgs.flats}):
                     </td>
                     <td className="border border-gray-300 px-4 py-3 text-right text-xl">
                       {formatNumber(summary.grandTotal)} {t.currency}
@@ -337,7 +331,7 @@ export default function BillPreview({
             {/* Footer */}
             <div className="mt-8 pt-6 border-t border-gray-300 text-center text-xs text-gray-500">
               <p>
-                {language === 'en' ? 'Generated from' : 'তৈরি হয়েছে'}:{' '}
+                {uiMsgs.generatedFrom}:{' '}
                 <a href={window.location.href} className="text-blue-600 underline">
                   {window.location.hostname + window.location.pathname}
                 </a>

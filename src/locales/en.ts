@@ -25,6 +25,7 @@ export const en = {
   category: {
     title: 'Service Charge Categories',
     addCategory: 'Add Category',
+    noCategoriesYet: 'No categories added yet. Click "Add Category" to get started.',
     categoryName: 'Category Name',
     categoryNamePlaceholder: 'e.g., Electricity, Water, Security',
     billDuration: 'Bill Duration',

@@ -10,7 +10,39 @@ This guide will walk you through adding a new language to the Service Charge Bil
 
 ## 🚀 Quick Start (5 Steps)
 
-### Step 1: Create Translation File
+### Step 1: Add Language to Configuration
+
+First, add your language to the configuration in `src/locales/config.ts`:
+
+```typescript
+export const AVAILABLE_LANGUAGES: LanguageConfig[] = [
+  {
+    code: 'bn',
+    name: 'Bengali',
+    nativeName: 'বাংলা',
+    direction: 'ltr',
+    flag: '🇧🇩',
+  },
+  {
+    code: 'en',
+    name: 'English',
+    nativeName: 'English',
+    direction: 'ltr',
+    flag: '🇬🇧',
+  },
+  {
+    code: 'hi',  // Add your language code
+    name: 'Hindi',
+    nativeName: 'हिन्दी',
+    direction: 'ltr',
+    flag: '🇮🇳',
+  },
+];
+```
+
+Note: The `SupportedLanguage` type is now automatically generated from this array, so no manual type updates needed!
+
+### Step 2: Create Translation File
 
 Create a new file in `src/locales/` for your language. For example, for Hindi (`hi.ts`):
 
@@ -93,59 +125,43 @@ export const hi: Translation = {
 
 **💡 Tip:** Copy `src/locales/en.ts` or `src/locales/bn.ts` as a starting template!
 
-### Step 2: Register Language in Config
+### Step 3: Add Translation Import and Utilities
 
-Edit `src/locales/config.ts` and add your language to the `AVAILABLE_LANGUAGES` array:
-
-```typescript
-export const AVAILABLE_LANGUAGES: LanguageConfig[] = [
-  {
-    code: 'bn',
-    name: 'Bengali',
-    nativeName: 'বাংলা',
-    direction: 'ltr',
-    flag: '🇧🇩',
-  },
-  {
-    code: 'en',
-    name: 'English',
-    nativeName: 'English',
-    direction: 'ltr',
-    flag: '🇬🇧',
-  },
-  // ✅ ADD YOUR LANGUAGE HERE
-  {
-    code: 'hi',
-    name: 'Hindi',
-    nativeName: 'हिन्दी',
-    direction: 'ltr',
-    flag: '🇮🇳',
-  },
-];
-```
-
-**Update the type union:**
-
-```typescript
-export type SupportedLanguage = 'bn' | 'en' | 'hi'; // Add your language code
-```
-
-### Step 3: Import Translation
-
-Edit `src/locales/index.ts` and import your translation:
+Edit `src/locales/index.ts` to export your translation:
 
 ```typescript
 import { en } from './en';
 import { bn } from './bn';
-import { hi } from './hi'; // ✅ ADD THIS
-
-export type Language = 'en' | 'bn' | 'hi'; // ✅ ADD YOUR CODE
+import { hi } from './hi'; // Add your import
 
 export const translations = {
   en,
   bn,
-  hi, // ✅ ADD THIS
+  hi, // Add your language
 };
+```
+
+Also update `src/utils/i18n.ts` to add your language to the translation and utility maps:
+
+```typescript
+// In getTranslations function - add import
+import { hi } from '../locales/hi';
+
+const translations = {
+  bn,
+  en,
+  hi, // Add your language
+} as const;
+
+// In getLocaleCode function
+const localeMap: Record<SupportedLanguage, string> = {
+  en: 'en-US',
+  bn: 'bn-BD',
+  hi: 'hi-IN', // Add your locale
+};
+
+// In getValidationMessages, getConfirmationMessages, and getUIMessages functions
+// Add your language messages to each map
 ```
 
 ### Step 4: Create Example Data (Optional)
@@ -181,17 +197,17 @@ Then update `src/utils/exampleData.ts`:
 export { exampleDataHi } from './exampleData.hi';
 ```
 
-And update the loadExample function in `BillCalculator.tsx`:
+And update the example data map in `src/utils/exampleData.ts`:
 
 ```typescript
-const loadExample = () => {
-  const exampleData = language === 'en' ? exampleDataEn
-    : language === 'bn' ? exampleDataBn
-    : exampleDataHi; // Add your language
-  setBillData(exampleData);
-  setShowHelp(false);
+export const exampleDataMap: Record<SupportedLanguage, BillData> = {
+  en: exampleDataEn,
+  bn: exampleDataBn,
+  hi: exampleDataHi, // Add your language
 };
 ```
+
+Note: The system now uses `getExampleData(language)` which automatically retrieves from the map, so no changes needed in BillCalculator.tsx.
 
 ### Step 5: Test Your Language
 

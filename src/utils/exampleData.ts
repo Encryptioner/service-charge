@@ -1,127 +1,127 @@
 import type { BillData } from '../types';
+import type { SupportedLanguage } from '../locales/config';
 
-export const exampleDataEn: BillData = {
-  title: 'Monthly Service Charge - January 2024',
+const exampleDataEn: BillData = {
+  title: 'Monthly Service Charge - January 2025',
   numberOfFlats: 10,
   paymentInfo: `Bank: ABC Bank Limited
 Account Name: Building Management Committee
 Account Number: 1234567890
 Bkash: +880 1712345678
 Nagad: +880 1812345678`,
-  notes: `Please pay by the 10th of each month.
-Late payment fee: 50 BDT per day after the 15th.
+  notes: `Please pay by the 22th of each month.
+Late payment fee: 50 BDT per day after the 22th.
 For queries, contact: +880 1912345678`,
   categories: [
     {
       id: '1',
       name: 'Electricity (Common Area)',
-      duration: 'December 15, 2023 - January 15, 2024',
+      duration: 'December 15, 2024 - January 15, 2025',
       info: 'Bill No: 123456, Previous: 5000 units, Current: 5500 units',
       billType: 'all-building',
-      amount: 5000,
+      amount: 50000,
     },
     {
       id: '2',
       name: 'Water Bill',
-      duration: 'January 2024',
+      duration: 'January 2025',
       info: 'WASA Bill for the entire building',
       billType: 'all-building',
-      amount: 3000,
+      amount: 20000,
     },
     {
       id: '3',
-      name: 'Security Guard Salary',
-      duration: 'January 2024',
-      info: '2 guards @ 15,000 BDT each',
+      name: 'Caretaker Salary',
+      duration: 'January 2025',
+      info: '15,000 BDT',
       billType: 'all-building',
-      amount: 30000,
+      amount: 15000,
     },
     {
       id: '4',
-      name: 'Cleaning Service',
-      duration: 'January 2024',
-      info: 'Daily cleaning of common areas',
+      name: 'Small Bills',
+      duration: 'January 2025',
+      info: 'Photocopy',
       billType: 'all-building',
-      amount: 8000,
+      amount: 50,
     },
     {
       id: '5',
-      name: 'Generator Maintenance',
-      duration: 'January 2024',
-      info: 'Monthly maintenance and fuel',
+      name: 'Deposit',
+      duration: 'January 2025',
+      info: 'Monthly subscription for future use',
       billType: 'single-flat',
-      amount: 500,
-    },
-    {
-      id: '6',
-      name: 'Building Insurance',
-      duration: 'January 2024',
-      info: 'Annual premium (1/12th)',
-      billType: 'all-building',
-      amount: 2000,
+      amount: 100,
     },
   ],
 };
 
-export const exampleDataBn: BillData = {
-  title: 'মাসিক সার্ভিস চার্জ - জানুয়ারি ২০২৪',
+const exampleDataBn: BillData = {
+  title: 'মাসিক সার্ভিস চার্জ - জানুয়ারি ২০২৫',
   numberOfFlats: 10,
   paymentInfo: `ব্যাংক: এবিসি ব্যাংক লিমিটেড
 অ্যাকাউন্টের নাম: বিল্ডিং ম্যানেজমেন্ট কমিটি
 অ্যাকাউন্ট নম্বর: ১২৩৪৫৬৭৮৯০
 বিকাশ: +৮৮০ ১৭১২৩৪৫৬৭৮
 নগদ: +৮৮০ ১৮১২৩৪৫৬৭৮`,
-  notes: `অনুগ্রহ করে প্রতি মাসের ১০ তারিখের মধ্যে পেমেন্ট করুন।
-বিলম্ব ফি: ১৫ তারিখের পর প্রতিদিন ৫০ টাকা।
+  notes: `অনুগ্রহ করে প্রতি মাসের ২২ তারিখের মধ্যে পেমেন্ট করুন।
+বিলম্ব ফি: ২২ তারিখের পর প্রতিদিন ৫০ টাকা।
 যেকোনো প্রশ্নের জন্য যোগাযোগ: +৮৮০ ১৯১২৩৪৫৬৭৮`,
   categories: [
     {
       id: '1',
       name: 'বিদ্যুৎ (কমন এরিয়া)',
-      duration: '১৫ ডিসেম্বর, ২০২৩ - ১৫ জানুয়ারি, ২০২৪',
+      duration: '১৫ ডিসেম্বর, ২০২৪ - ১৫ জানুয়ারি, ২০২৫',
       info: 'বিল নং: ১২৩৪৫৬, পূর্ববর্তী: ৫০০০ ইউনিট, বর্তমান: ৫৫০০ ইউনিট',
       billType: 'all-building',
-      amount: 5000,
+      amount: 50000,
     },
     {
       id: '2',
       name: 'পানির বিল',
-      duration: 'জানুয়ারি ২০২৪',
+      duration: 'জানুয়ারি ২০২৫',
       info: 'সম্পূর্ণ ভবনের জন্য ওয়াসা বিল',
       billType: 'all-building',
-      amount: 3000,
+      amount: 20000,
     },
     {
       id: '3',
-      name: 'নিরাপত্তা প্রহরীর বেতন',
-      duration: 'জানুয়ারি ২০২৪',
-      info: '২ জন প্রহরী @ ১৫,০০০ টাকা করে',
+      name: 'কেয়ারটেকারের বেতন',
+      duration: 'জানুয়ারি ২০২৫',
+      info: '১৫,০০০ টাকা',
       billType: 'all-building',
-      amount: 30000,
+      amount: 15000,
     },
     {
       id: '4',
-      name: 'পরিষ্কার সেবা',
-      duration: 'জানুয়ারি ২০২৪',
-      info: 'কমন এরিয়ার দৈনিক পরিষ্কার',
+      name: 'ছোট বিল',
+      duration: 'জানুয়ারি ২০২৫',
+      info: 'ফটোকপি',
       billType: 'all-building',
-      amount: 8000,
+      amount: 50,
     },
     {
       id: '5',
-      name: 'জেনারেটর রক্ষণাবেক্ষণ',
-      duration: 'জানুয়ারি ২০২৪',
-      info: 'মাসিক রক্ষণাবেক্ষণ এবং জ্বালানি',
+      name: 'ডিপোজিট',
+      duration: 'জানুয়ারি ২০২৫',
+      info: 'ভবিষ্যতের ব্যাবহারের জন্য মাসিক চাঁদা',
       billType: 'single-flat',
-      amount: 500,
-    },
-    {
-      id: '6',
-      name: 'ভবন বীমা',
-      duration: 'জানুয়ারি ২০২৪',
-      info: 'বার্ষিক প্রিমিয়াম (১/১২ অংশ)',
-      billType: 'all-building',
-      amount: 2000,
+      amount: 100,
     },
   ],
+};
+
+// Example data map - add new language example data here
+export const exampleDataMap: Record<SupportedLanguage, BillData> = {
+  en: exampleDataEn,
+  bn: exampleDataBn,
+  // Add new languages here:
+  // hi: exampleDataHi,
+};
+
+/**
+ * Get example data for a specific language
+ */
+export const getExampleData = (language: SupportedLanguage): BillData => {
+  return exampleDataMap[language] || exampleDataMap.bn;
 };
