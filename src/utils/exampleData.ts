@@ -7,10 +7,10 @@ const exampleDataEn: BillData = {
   garage: {
     motorcycleSpaces: 0,
     motorcycleSpaceAmount: 100,
-    motorcycleSpaceNotes: 'Flats: 101, 102, 103, 201, 202, 203, 301, 302, 303, 401, 402, 403, 501, 502, 503',
+    motorcycleSpaceNotes: 'Flats: 1-A, 2-B, 3-C',
     carSpaces: 0,
     carSpaceAmount: 250,
-    carSpaceNotes: 'Flats: 101, 102, 201, 202, 301, 302, 401, 402, 501, 502',
+    carSpaceNotes: 'Flats: 1-A, 2-B, 3-C',
   },
   paymentInfo: `Bank: ABC Bank Limited
 Account Name: Building Management Committee
@@ -70,10 +70,10 @@ const exampleDataBn: BillData = {
   garage: {
     motorcycleSpaces: 0,
     motorcycleSpaceAmount: 100,
-    motorcycleSpaceNotes: 'ফ্ল্যাট: ১০১, ১০২, ১০৩, ২০১, ২০২, ২০৩, ৩০১, ৩০২, ৩০৩, ৪০১, ৪০২, ৪০৩, ৫০১, ৫০২, ৫০৩',
+    motorcycleSpaceNotes: 'ফ্ল্যাট: ১-এ, ২-বি, ৩-সি',
     carSpaces: 0,
     carSpaceAmount: 250,
-    carSpaceNotes: 'ফ্ল্যাট: ১০১, ১০২, ২০১, ২০২, ৩০১, ৩০২, ৪০১, ৪০২, ৫০১, ৫০২',
+    carSpaceNotes: 'ফ্ল্যাট: ১-এ, ২-বি, ৩-সি',
   },
   paymentInfo: `ব্যাংক: এবিসি ব্যাংক লিমিটেড
 অ্যাকাউন্টের নাম: বিল্ডিং ম্যানেজমেন্ট কমিটি
