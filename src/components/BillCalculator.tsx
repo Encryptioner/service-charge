@@ -6,6 +6,7 @@ import { calculateBillSummary, formatNumber } from '../utils/calculations';
 import { saveBillData, loadBillData, clearBillData } from '../utils/storage';
 import { getExampleData } from '../utils/exampleData';
 import { getTranslations, getValidationMessages, getConfirmationMessages, getUIMessages } from '../utils/i18n';
+import { numberToWords } from '../utils/numberToWords';
 import CategoryForm from './CategoryForm';
 import BillPreview from './BillPreview';
 import HelpSection from './HelpSection';
@@ -518,6 +519,9 @@ export default function BillCalculator() {
                   <p className="text-3xl font-bold mt-1">
                     {formatNumber(summary.perFlatTotal)} {t.currency}
                   </p>
+                  <p className="text-xs opacity-75 mt-2">
+                    {t.summary.inWords}: {numberToWords(summary.perFlatTotal, language)}
+                  </p>
                 </div>
 
                 {/* Garage Space Variations */}
@@ -561,6 +565,9 @@ export default function BillCalculator() {
                 </p>
                 <p className="text-4xl font-bold mt-2">
                   = {formatNumber(summary.grandTotal)} {t.currency}
+                </p>
+                <p className="text-sm opacity-75 mt-3">
+                  {t.summary.inWords}: {numberToWords(summary.grandTotal, language)}
                 </p>
               </div>
             </div>
@@ -618,6 +625,9 @@ export default function BillCalculator() {
                   <p className="opacity-90 text-base">{t.summary.flatsPlusGarage}:</p>
                   <p className="font-bold text-3xl mt-1">
                     {formatNumber(summary.grandTotal + (billData.garage.motorcycleSpaces * billData.garage.motorcycleSpaceAmount) + (billData.garage.carSpaces * billData.garage.carSpaceAmount))} {t.currency}
+                  </p>
+                  <p className="text-sm opacity-75 mt-3">
+                    {t.summary.inWords}: {numberToWords(summary.grandTotal + (billData.garage.motorcycleSpaces * billData.garage.motorcycleSpaceAmount) + (billData.garage.carSpaces * billData.garage.carSpaceAmount), language)}
                   </p>
                 </div>
               </div>

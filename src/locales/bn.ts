@@ -75,7 +75,8 @@ export const bn = {
     totalFlatCollection: 'মোট ফ্ল্যাট সংগ্রহ',
     combinedTotal: 'সম্মিলিত মোট সংগ্রহ',
     flatsPlusGarage: 'ফ্ল্যাট + গ্যারেজ',
-    withoutGarage: 'গ্যারেজ ব্যাতীত'
+    withoutGarage: 'গ্যারেজ ব্যাতীত',
+    inWords: 'কথায়',
   },
   actions: {
     loadExample: 'উদাহরণ ডেটা লোড করুন',

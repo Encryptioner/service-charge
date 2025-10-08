@@ -75,7 +75,8 @@ export const en = {
     totalFlatCollection: 'Total Flat Collection',
     combinedTotal: 'Combined Total Collection',
     flatsPlusGarage: 'Flats + Garage',
-    withoutGarage: 'Without Garage'
+    withoutGarage: 'Without Garage',
+    inWords: 'In Words',
   },
   actions: {
     loadExample: 'Load Example Data',

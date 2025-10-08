@@ -5,6 +5,7 @@ import type { BillData, BillSummary } from '../types';
 import type { SupportedLanguage } from '../locales/config';
 import { getTranslations, getLocaleCode, getUIMessages } from '../utils/i18n';
 import { formatNumber } from '../utils/calculations';
+import { numberToWords } from '../utils/numberToWords';
 
 interface BillPreviewProps {
   billData: BillData;
@@ -273,6 +274,14 @@ export default function BillPreview({
                       {formatNumber(summary.perFlatTotal)} {t.currency}
                     </td>
                   </tr>
+                  <tr className="bg-gray-50">
+                    <td
+                      colSpan={5}
+                      className="border border-gray-300 px-3 py-1 text-right text-xs text-gray-600 italic"
+                    >
+                      {t.summary.inWords}: {numberToWords(summary.perFlatTotal, language)}
+                    </td>
+                  </tr>
 
                   {/* Garage space variations */}
                   {billData.garage.motorcycleSpaces > 0 && (
@@ -327,6 +336,14 @@ export default function BillPreview({
                     </td>
                     <td className="border border-gray-300 px-3 py-2 text-right text-base">
                       {formatNumber(summary.grandTotal)} {t.currency}
+                    </td>
+                  </tr>
+                  <tr className="bg-gray-100">
+                    <td
+                      colSpan={5}
+                      className="border border-gray-300 px-3 py-1 text-right text-xs text-gray-600 italic"
+                    >
+                      {t.summary.inWords}: {numberToWords(summary.grandTotal, language)}
                     </td>
                   </tr>
                 </tfoot>
@@ -416,6 +433,9 @@ export default function BillPreview({
                 <div className="pt-3 border-t-2 border-blue-400">
                   <p className="text-gray-700 text-sm font-medium">{t.summary.flatsPlusGarage}:</p>
                   <p className="font-bold text-xl text-gray-900">{formatNumber(summary.grandTotal + (billData.garage.motorcycleSpaces * billData.garage.motorcycleSpaceAmount) + (billData.garage.carSpaces * billData.garage.carSpaceAmount))} {t.currency}</p>
+                  <p className="text-xs text-gray-600 italic mt-2">
+                    {t.summary.inWords}: {numberToWords(summary.grandTotal + (billData.garage.motorcycleSpaces * billData.garage.motorcycleSpaceAmount) + (billData.garage.carSpaces * billData.garage.carSpaceAmount), language)}
+                  </p>
                 </div>
               </div>
             )}
