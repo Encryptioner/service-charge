@@ -1,8 +1,9 @@
-import type { ServiceCategory, BillSummary } from '../types';
+import type { ServiceCategory, BillSummary, GarageSpace } from '../types';
 
 export function calculateBillSummary(
   categories: ServiceCategory[],
-  numberOfFlats: number
+  numberOfFlats: number,
+  garage: GarageSpace
 ): BillSummary {
   let perFlatTotal = 0;
   const categoryTotals = new Map<string, number>();
@@ -28,9 +29,17 @@ export function calculateBillSummary(
   // Grand total is also rounded up
   const grandTotal = Math.ceil(perFlatTotal * numberOfFlats);
 
+  // Calculate totals with garage spaces
+  const totalWithMotorcycle = perFlatTotal + garage.motorcycleSpaceAmount;
+  const totalWithCar = perFlatTotal + garage.carSpaceAmount;
+  const totalWithBoth = perFlatTotal + garage.motorcycleSpaceAmount + garage.carSpaceAmount;
+
   return {
     perFlatTotal,
     grandTotal,
+    totalWithMotorcycle,
+    totalWithCar,
+    totalWithBoth,
     categoryTotals,
   };
 }

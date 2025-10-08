@@ -3,7 +3,15 @@ import type { SupportedLanguage } from '../locales/config';
 
 const exampleDataEn: BillData = {
   title: 'Monthly Service Charge - January 2025',
-  numberOfFlats: 10,
+  numberOfFlats: 30,
+  garage: {
+    motorcycleSpaces: 0,
+    motorcycleSpaceAmount: 100,
+    motorcycleSpaceNotes: 'Flats: 101, 102, 103, 201, 202, 203, 301, 302, 303, 401, 402, 403, 501, 502, 503',
+    carSpaces: 0,
+    carSpaceAmount: 250,
+    carSpaceNotes: 'Flats: 101, 102, 201, 202, 301, 302, 401, 402, 501, 502',
+  },
   paymentInfo: `Bank: ABC Bank Limited
 Account Name: Building Management Committee
 Account Number: 1234567890
@@ -58,7 +66,15 @@ For queries, contact: +880 1912345678`,
 
 const exampleDataBn: BillData = {
   title: 'মাসিক সার্ভিস চার্জ - জানুয়ারি ২০২৫',
-  numberOfFlats: 10,
+  numberOfFlats: 30,
+  garage: {
+    motorcycleSpaces: 0,
+    motorcycleSpaceAmount: 100,
+    motorcycleSpaceNotes: 'ফ্ল্যাট: ১০১, ১০২, ১০৩, ২০১, ২০২, ২০৩, ৩০১, ৩০২, ৩০৩, ৪০১, ৪০২, ৪০৩, ৫০১, ৫০২, ৫০৩',
+    carSpaces: 0,
+    carSpaceAmount: 250,
+    carSpaceNotes: 'ফ্ল্যাট: ১০১, ১০২, ২০১, ২০২, ৩০১, ৩০২, ৪০১, ৪০২, ৫০১, ৫০২',
+  },
   paymentInfo: `ব্যাংক: এবিসি ব্যাংক লিমিটেড
 অ্যাকাউন্টের নাম: বিল্ডিং ম্যানেজমেন্ট কমিটি
 অ্যাকাউন্ট নম্বর: ১২৩৪৫৬৭৮৯০

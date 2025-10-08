@@ -9,9 +9,19 @@ export interface ServiceCategory {
   amount: number;
 }
 
+export interface GarageSpace {
+  motorcycleSpaces: number;
+  motorcycleSpaceAmount: number;
+  motorcycleSpaceNotes: string;
+  carSpaces: number;
+  carSpaceAmount: number;
+  carSpaceNotes: string;
+}
+
 export interface BillData {
   title: string;
   numberOfFlats: number;
+  garage: GarageSpace;
   paymentInfo: string;
   notes: string;
   categories: ServiceCategory[];
@@ -20,5 +30,8 @@ export interface BillData {
 export interface BillSummary {
   perFlatTotal: number;
   grandTotal: number;
+  totalWithMotorcycle: number;
+  totalWithCar: number;
+  totalWithBoth: number;
   categoryTotals: Map<string, number>;
 }

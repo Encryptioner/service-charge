@@ -3,7 +3,7 @@ import type { BillData, ServiceCategory } from '../types';
 import type { SupportedLanguage } from '../locales/config';
 import { isLanguageSupported } from '../locales/config';
 import { calculateBillSummary, formatNumber } from '../utils/calculations';
-import { saveBillData, loadBillData } from '../utils/storage';
+import { saveBillData, loadBillData, clearBillData } from '../utils/storage';
 import { getExampleData } from '../utils/exampleData';
 import { getTranslations, getValidationMessages, getConfirmationMessages, getUIMessages } from '../utils/i18n';
 import CategoryForm from './CategoryForm';
@@ -29,12 +29,20 @@ export default function BillCalculator() {
   const [billData, setBillData] = useState<BillData>({
     title: '',
     numberOfFlats: 0,
+    garage: {
+      motorcycleSpaces: 0,
+      motorcycleSpaceAmount: 0,
+      motorcycleSpaceNotes: '',
+      carSpaces: 0,
+      carSpaceAmount: 0,
+      carSpaceNotes: '',
+    },
     paymentInfo: '',
     notes: '',
     categories: [],
   });
   const [showPreview, setShowPreview] = useState(false);
-  const [showHelp, setShowHelp] = useState(true);
+  const [showHelp, setShowHelp] = useState(false); // Start with false to prevent flash
   const [showClearConfirm, setShowClearConfirm] = useState(false);
   const [validationErrors, setValidationErrors] = useState<{
     title?: string;
@@ -60,7 +68,10 @@ export default function BillCalculator() {
     const savedData = loadBillData();
     if (savedData) {
       setBillData(savedData);
-      setShowHelp(false);
+      // Don't show help if we have saved data
+    } else {
+      // Show help only if no saved data
+      setShowHelp(true);
     }
   }, []);
 
@@ -191,6 +202,14 @@ export default function BillCalculator() {
     setBillData({
       title: '',
       numberOfFlats: 0,
+      garage: {
+        motorcycleSpaces: 0,
+        motorcycleSpaceAmount: 0,
+        motorcycleSpaceNotes: '',
+        carSpaces: 0,
+        carSpaceAmount: 0,
+        carSpaceNotes: '',
+      },
       paymentInfo: '',
       notes: '',
       categories: [],
@@ -198,9 +217,17 @@ export default function BillCalculator() {
     setValidationErrors({});
     setShowHelp(true);
     setShowClearConfirm(false);
+    clearBillData(); // Clear localStorage data
   };
 
-  const summary = calculateBillSummary(billData.categories, billData.numberOfFlats);
+  const handleGarageChange = (field: keyof typeof billData.garage, value: string | number) => {
+    setBillData((prev) => ({
+      ...prev,
+      garage: { ...prev.garage, [field]: value },
+    }));
+  };
+
+  const summary = calculateBillSummary(billData.categories, billData.numberOfFlats, billData.garage);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
@@ -296,6 +323,120 @@ export default function BillCalculator() {
               )}
             </div>
 
+            {/* Garage Spaces Section */}
+            <div className="md:col-span-2">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-200">
+                {t.form.garageSpaces}
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Motorcycle Spaces */}
+                <div className="space-y-4 p-4 bg-blue-50 rounded-lg">
+                  <h4 className="font-medium text-gray-900">{t.form.motorcycleSpaces}</h4>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      {t.form.motorcycleSpaces}
+                      <span className="text-gray-500 text-xs ml-2">{t.form.motorcycleSpacesHelp}</span>
+                    </label>
+                    <input
+                      type="number"
+                      value={billData.garage.motorcycleSpaces || ''}
+                      onChange={(e) => handleGarageChange('motorcycleSpaces', parseInt(e.target.value) || 0)}
+                      placeholder={t.form.motorcycleSpacesPlaceholder}
+                      min="0"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    />
+                  </div>
+
+                  {billData.garage.motorcycleSpaces > 0 && (
+                    <>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          {t.form.motorcycleSpaceAmount}
+                          <span className="text-gray-500 text-xs ml-2">{t.form.motorcycleSpaceAmountHelp}</span>
+                        </label>
+                        <input
+                          type="number"
+                          value={billData.garage.motorcycleSpaceAmount || ''}
+                          onChange={(e) => handleGarageChange('motorcycleSpaceAmount', parseInt(e.target.value) || 0)}
+                          placeholder={t.form.motorcycleSpaceAmountPlaceholder}
+                          min="0"
+                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          {t.form.motorcycleSpaceNotes}
+                          <span className="text-gray-500 text-xs ml-2">{t.form.motorcycleSpaceNotesHelp}</span>
+                        </label>
+                        <textarea
+                          value={billData.garage.motorcycleSpaceNotes}
+                          onChange={(e) => handleGarageChange('motorcycleSpaceNotes', e.target.value)}
+                          placeholder={t.form.motorcycleSpaceNotesPlaceholder}
+                          rows={3}
+                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        />
+                      </div>
+                    </>
+                  )}
+                </div>
+
+                {/* Car Spaces */}
+                <div className="space-y-4 p-4 bg-purple-50 rounded-lg">
+                  <h4 className="font-medium text-gray-900">{t.form.carSpaces}</h4>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      {t.form.carSpaces}
+                      <span className="text-gray-500 text-xs ml-2">{t.form.carSpacesHelp}</span>
+                    </label>
+                    <input
+                      type="number"
+                      value={billData.garage.carSpaces || ''}
+                      onChange={(e) => handleGarageChange('carSpaces', parseInt(e.target.value) || 0)}
+                      placeholder={t.form.carSpacesPlaceholder}
+                      min="0"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    />
+                  </div>
+
+                  {billData.garage.carSpaces > 0 && (
+                    <>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          {t.form.carSpaceAmount}
+                          <span className="text-gray-500 text-xs ml-2">{t.form.carSpaceAmountHelp}</span>
+                        </label>
+                        <input
+                          type="number"
+                          value={billData.garage.carSpaceAmount || ''}
+                          onChange={(e) => handleGarageChange('carSpaceAmount', parseInt(e.target.value) || 0)}
+                          placeholder={t.form.carSpaceAmountPlaceholder}
+                          min="0"
+                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          {t.form.carSpaceNotes}
+                          <span className="text-gray-500 text-xs ml-2">{t.form.carSpaceNotesHelp}</span>
+                        </label>
+                        <textarea
+                          value={billData.garage.carSpaceNotes}
+                          onChange={(e) => handleGarageChange('carSpaceNotes', e.target.value)}
+                          placeholder={t.form.carSpaceNotesPlaceholder}
+                          rows={3}
+                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                        />
+                      </div>
+                    </>
+                  )}
+                </div>
+              </div>
+            </div>
+
             {/* Payment Info */}
             <div className="md:col-span-2">
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -366,21 +507,121 @@ export default function BillCalculator() {
         {/* Summary */}
         {billData.categories.length > 0 && billData.numberOfFlats > 0 && (
           <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl shadow-lg p-6 mb-6 text-white">
-            <h2 className="text-xl font-bold mb-4">{t.summary.grandTotal}</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
-                <p className="text-sm opacity-90">{t.summary.perFlat}</p>
-                <p className="text-3xl font-bold mt-1">
-                  {formatNumber(summary.perFlatTotal)} {t.currency}
-                </p>
+            <h2 className="text-xl font-bold mb-4">{t.summary.flatCollectionSummary}</h2>
+
+            {/* Per Flat Section */}
+            <div className="mb-6">
+              <h3 className="text-lg font-semibold mb-3 border-b border-white/30 pb-2">{t.summary.perFlat}</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
+                  <p className="text-sm opacity-90">{t.summary.perFlat}</p>
+                  <p className="text-3xl font-bold mt-1">
+                    {formatNumber(summary.perFlatTotal)} {t.currency}
+                  </p>
+                </div>
+
+                {/* Garage Space Variations */}
+                {billData.garage.motorcycleSpaces > 0 && (
+                  <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
+                    <p className="text-sm opacity-90">{t.summary.withMotorcycleSpace}</p>
+                    <p className="text-2xl font-bold mt-1">
+                      {formatNumber(summary.totalWithMotorcycle)} {t.currency}
+                    </p>
+                  </div>
+                )}
+
+                {billData.garage.carSpaces > 0 && (
+                  <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
+                    <p className="text-sm opacity-90">{t.summary.withCarSpace}</p>
+                    <p className="text-2xl font-bold mt-1">
+                      {formatNumber(summary.totalWithCar)} {t.currency}
+                    </p>
+                  </div>
+                )}
+
+                {billData.garage.motorcycleSpaces > 0 && billData.garage.carSpaces > 0 && (
+                  <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
+                    <p className="text-sm opacity-90">{t.summary.withBothSpaces}</p>
+                    <p className="text-2xl font-bold mt-1">
+                      {formatNumber(summary.totalWithBoth)} {t.currency}
+                    </p>
+                  </div>
+                )}
               </div>
-              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
-                <p className="text-sm opacity-90">{t.summary.totalAmount}</p>
-                <p className="text-3xl font-bold mt-1">
-                  {formatNumber(summary.grandTotal)} {t.currency}
+            </div>
+
+            {/* Total Amount Section */}
+            <div>
+              <h3 className="text-lg font-semibold mb-3 border-b border-white/30 pb-2">{t.summary.totalAmount}
+              {(billData.garage.motorcycleSpaces > 0 || billData.garage.carSpaces > 0) ? ` (${t.summary.withoutGarage})`: ''}
+              </h3>
+              <div className="bg-white/20 backdrop-blur-sm rounded-lg p-4">
+                <p className="text-xl font-bold">
+                  {billData.numberOfFlats} × {formatNumber(summary.perFlatTotal)}
+                </p>
+                <p className="text-4xl font-bold mt-2">
+                  = {formatNumber(summary.grandTotal)} {t.currency}
                 </p>
               </div>
             </div>
+
+            {/* Total Garage Collection Summary */}
+            {(billData.garage.motorcycleSpaces > 0 || billData.garage.carSpaces > 0) && (
+              <div className="mt-6 pt-6 border-t border-white/20">
+                <h3 className="text-lg font-semibold mb-3">{t.summary.garageCollection}</h3>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                  {billData.garage.motorcycleSpaces > 0 && (
+                    <div>
+                      <p className="opacity-90">{t.summary.totalMotorcycleSpaces}:</p>
+                      <p className="font-bold text-lg">
+                        {billData.garage.motorcycleSpaces} × {formatNumber(billData.garage.motorcycleSpaceAmount)} = {formatNumber(billData.garage.motorcycleSpaces * billData.garage.motorcycleSpaceAmount)} {t.currency}
+                      </p>
+                    </div>
+                  )}
+                  {billData.garage.carSpaces > 0 && (
+                    <div>
+                      <p className="opacity-90">{t.summary.totalCarSpaces}:</p>
+                      <p className="font-bold text-lg">
+                        {billData.garage.carSpaces} × {formatNumber(billData.garage.carSpaceAmount)} = {formatNumber(billData.garage.carSpaces * billData.garage.carSpaceAmount)} {t.currency}
+                      </p>
+                    </div>
+                  )}
+                  <div>
+                    <p className="opacity-90">{t.summary.totalGarageCollection}:</p>
+                    <p className="font-bold text-xl">
+                      {formatNumber((billData.garage.motorcycleSpaces * billData.garage.motorcycleSpaceAmount) + (billData.garage.carSpaces * billData.garage.carSpaceAmount))} {t.currency}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Combined Total (Flats + Garage) */}
+            {(billData.garage.motorcycleSpaces > 0 || billData.garage.carSpaces > 0) && (
+              <div className="mt-6 pt-6 border-t-2 border-white/30">
+                <h3 className="text-xl font-bold mb-3">{t.summary.combinedTotal}</h3>
+                <div className="grid grid-cols-2 gap-4 text-base mb-3">
+                  <div>
+                    <p className="opacity-90">{t.summary.totalFlatCollection}:</p>
+                    <p className="font-bold text-xl">
+                      {billData.numberOfFlats} × {formatNumber(summary.perFlatTotal)} = {formatNumber(summary.grandTotal)} {t.currency}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="opacity-90">{t.summary.totalGarageCollection}:</p>
+                    <p className="font-bold text-xl">
+                      {formatNumber((billData.garage.motorcycleSpaces * billData.garage.motorcycleSpaceAmount) + (billData.garage.carSpaces * billData.garage.carSpaceAmount))} {t.currency}
+                    </p>
+                  </div>
+                </div>
+                <div className="bg-white/20 backdrop-blur-sm rounded-lg p-4">
+                  <p className="opacity-90 text-base">{t.summary.flatsPlusGarage}:</p>
+                  <p className="font-bold text-3xl mt-1">
+                    {formatNumber(summary.grandTotal + (billData.garage.motorcycleSpaces * billData.garage.motorcycleSpaceAmount) + (billData.garage.carSpaces * billData.garage.carSpaceAmount))} {t.currency}
+                  </p>
+                </div>
+              </div>
+            )}
           </div>
         )}
 

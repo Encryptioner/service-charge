@@ -13,7 +13,23 @@ export function saveBillData(data: BillData): void {
 export function loadBillData(): BillData | null {
   try {
     const data = localStorage.getItem(STORAGE_KEY);
-    return data ? JSON.parse(data) : null;
+    if (!data) return null;
+
+    const parsed = JSON.parse(data);
+
+    // Backward compatibility: add garage fields if they don't exist
+    if (!parsed.garage) {
+      parsed.garage = {
+        motorcycleSpaces: 0,
+        motorcycleSpaceAmount: 0,
+        motorcycleSpaceNotes: '',
+        carSpaces: 0,
+        carSpaceAmount: 0,
+        carSpaceNotes: '',
+      };
+    }
+
+    return parsed;
   } catch (error) {
     console.error('Failed to load bill data:', error);
     return null;

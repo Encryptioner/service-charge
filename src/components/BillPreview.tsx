@@ -37,22 +37,28 @@ export default function BillPreview({
     const styleOverride = document.createElement('style');
     styleOverride.id = 'pdf-color-override';
     styleOverride.textContent = `
-      :root, :host {
+      :root, :host, * {
         --color-red-600: #dc2626 !important;
         --color-red-700: #b91c1c !important;
         --color-yellow-50: #fefce8 !important;
+        --color-yellow-100: #fef9c3 !important;
         --color-yellow-200: #fef08a !important;
         --color-yellow-300: #fde047 !important;
+        --color-green-50: #f0fdf4 !important;
+        --color-green-100: #dcfce7 !important;
         --color-green-600: #16a34a !important;
         --color-green-700: #15803d !important;
         --color-blue-50: #eff6ff !important;
         --color-blue-100: #dbeafe !important;
+        --color-blue-200: #bfdbfe !important;
         --color-blue-300: #93c5fd !important;
         --color-blue-400: #60a5fa !important;
         --color-blue-500: #3b82f6 !important;
         --color-blue-600: #2563eb !important;
         --color-blue-700: #1d4ed8 !important;
         --color-purple-50: #faf5ff !important;
+        --color-purple-100: #f3e8ff !important;
+        --color-purple-200: #e9d5ff !important;
         --color-purple-600: #9333ea !important;
         --color-gray-50: #f9fafb !important;
         --color-gray-100: #f3f4f6 !important;
@@ -62,10 +68,35 @@ export default function BillPreview({
         --color-gray-500: #6b7280 !important;
         --color-gray-600: #4b5563 !important;
         --color-gray-700: #374151 !important;
+        --color-gray-800: #1f2937 !important;
         --color-gray-900: #111827 !important;
         --color-black: #000000 !important;
         --color-white: #ffffff !important;
       }
+
+      /* Force specific background colors for print */
+      .bg-blue-50 { background-color: #eff6ff !important; }
+      .bg-blue-100 { background-color: #dbeafe !important; }
+      .bg-blue-200 { background-color: #bfdbfe !important; }
+      .bg-purple-50 { background-color: #faf5ff !important; }
+      .bg-purple-100 { background-color: #f3e8ff !important; }
+      .bg-purple-200 { background-color: #e9d5ff !important; }
+      .bg-green-50 { background-color: #f0fdf4 !important; }
+      .bg-green-100 { background-color: #dcfce7 !important; }
+      .bg-yellow-50 { background-color: #fefce8 !important; }
+      .bg-yellow-100 { background-color: #fef9c3 !important; }
+      .bg-gray-50 { background-color: #f9fafb !important; }
+      .bg-gray-100 { background-color: #f3f4f6 !important; }
+      .bg-gray-200 { background-color: #e5e7eb !important; }
+
+      /* Border colors */
+      .border-blue-200 { border-color: #bfdbfe !important; }
+      .border-blue-300 { border-color: #93c5fd !important; }
+      .border-purple-200 { border-color: #e9d5ff !important; }
+      .border-purple-300 { border-color: #e9d5ff !important; }
+      .border-yellow-200 { border-color: #fef08a !important; }
+      .border-gray-200 { border-color: #e5e7eb !important; }
+      .border-gray-300 { border-color: #d1d5db !important; }
     `;
     document.head.appendChild(styleOverride);
 
@@ -279,32 +310,163 @@ export default function BillPreview({
                   })}
                 </tbody>
                 <tfoot>
-                  <tr className="bg-blue-50 font-bold">
+                  <tr className="bg-gray-100 font-bold">
                     <td
                       colSpan={4}
-                      className="border border-gray-300 px-4 py-3 text-right"
+                      className="border border-gray-300 px-3 py-1 text-right text-sm"
                     >
                       {t.summary.perFlat}:
                     </td>
-                    <td className="border border-gray-300 px-4 py-3 text-right text-lg">
+                    <td className="border border-gray-300 px-1 py-1 text-right">
                       {formatNumber(summary.perFlatTotal)} {t.currency}
                     </td>
                   </tr>
-                  <tr className="bg-blue-100 font-bold">
+
+                  {/* Garage space variations */}
+                  {billData.garage.motorcycleSpaces > 0 && (
+                    <tr className="bg-gray-50 font-medium">
+                      <td
+                        colSpan={4}
+                        className="border border-gray-300 px-3 py-1 text-right text-xs"
+                      >
+                        {t.summary.withMotorcycleSpace}:
+                      </td>
+                      <td className="border border-gray-300 px-3 py-1 text-right text-xs">
+                        {formatNumber(summary.totalWithMotorcycle)} {t.currency}
+                      </td>
+                    </tr>
+                  )}
+
+                  {billData.garage.carSpaces > 0 && (
+                    <tr className="bg-gray-50 font-medium">
+                      <td
+                        colSpan={4}
+                        className="border border-gray-300 px-3 py-1 text-right text-xs"
+                      >
+                        {t.summary.withCarSpace}:
+                      </td>
+                      <td className="border border-gray-300 px-3 py-1 text-right text-xs">
+                        {formatNumber(summary.totalWithCar)} {t.currency}
+                      </td>
+                    </tr>
+                  )}
+
+                  {billData.garage.motorcycleSpaces > 0 && billData.garage.carSpaces > 0 && (
+                    <tr className="bg-gray-50 font-medium">
+                      <td
+                        colSpan={4}
+                        className="border border-gray-300 px-3 py-1 text-right text-xs"
+                      >
+                        {t.summary.withBothSpaces}:
+                      </td>
+                      <td className="border border-gray-300 px-3 py-1 text-right text-xs">
+                        {formatNumber(summary.totalWithBoth)} {t.currency}
+                      </td>
+                    </tr>
+                  )}
+
+                  <tr className="bg-gray-200 font-bold">
                     <td
                       colSpan={4}
-                      className="border border-gray-300 px-4 py-3 text-right"
+                      className="border border-gray-300 px-3 py-2 text-right text-sm"
                     >
-                      {t.summary.totalAmount} ({billData.numberOfFlats}{' '}
+                      {t.summary.totalFlatCollection} ({billData.numberOfFlats}{' '}
                       {uiMsgs.flats}):
                     </td>
-                    <td className="border border-gray-300 px-4 py-3 text-right text-xl">
+                    <td className="border border-gray-300 px-3 py-2 text-right text-base">
                       {formatNumber(summary.grandTotal)} {t.currency}
                     </td>
                   </tr>
                 </tfoot>
               </table>
             </div>
+
+            {/* Garage Space Information */}
+            {(billData.garage.motorcycleSpaces > 0 || billData.garage.carSpaces > 0) && (
+              <div className="mb-4">
+                <h2 className="text-lg font-bold text-gray-900 mb-3">
+                  {t.summary.garageCollection}
+                </h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  {billData.garage.motorcycleSpaces > 0 && (
+                    <div className="p-3 bg-gray-100 rounded border border-gray-300">
+                      <h3 className="font-bold text-gray-900 mb-2 text-sm">{t.form.motorcycleSpaces}</h3>
+                      <div className="space-y-1 text-xs">
+                        <p>
+                          <span className="font-medium">{t.summary.totalMotorcycleSpaces}:</span> {billData.garage.motorcycleSpaces}
+                        </p>
+                        <p>
+                          <span className="font-medium">{t.form.motorcycleSpaceAmount}:</span> {formatNumber(billData.garage.motorcycleSpaceAmount)} {t.currency}
+                        </p>
+                        <p className="font-bold pt-1 border-t border-gray-400">
+                          {t.summary.totalAmount}: {formatNumber(billData.garage.motorcycleSpaces * billData.garage.motorcycleSpaceAmount)} {t.currency}
+                        </p>
+                        {billData.garage.motorcycleSpaceNotes && (
+                          <div className="pt-1 border-t border-gray-400 mt-1">
+                            <p className="font-medium">{t.form.motorcycleSpaceNotes}:</p>
+                            <pre className="text-xs text-gray-700 whitespace-pre-wrap font-sans mt-0.5">
+                              {billData.garage.motorcycleSpaceNotes}
+                            </pre>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
+
+                  {billData.garage.carSpaces > 0 && (
+                    <div className="p-3 bg-gray-100 rounded border border-gray-300">
+                      <h3 className="font-bold text-gray-900 mb-2 text-sm">{t.form.carSpaces}</h3>
+                      <div className="space-y-1 text-xs">
+                        <p>
+                          <span className="font-medium">{t.summary.totalCarSpaces}:</span> {billData.garage.carSpaces}
+                        </p>
+                        <p>
+                          <span className="font-medium">{t.form.carSpaceAmount}:</span> {formatNumber(billData.garage.carSpaceAmount)} {t.currency}
+                        </p>
+                        <p className="font-bold pt-1 border-t border-gray-400">
+                          {t.summary.totalAmount}: {formatNumber(billData.garage.carSpaces * billData.garage.carSpaceAmount)} {t.currency}
+                        </p>
+                        {billData.garage.carSpaceNotes && (
+                          <div className="pt-1 border-t border-gray-400 mt-1">
+                            <p className="font-medium">{t.form.carSpaceNotes}:</p>
+                            <pre className="text-xs text-gray-700 whitespace-pre-wrap font-sans mt-0.5">
+                              {billData.garage.carSpaceNotes}
+                            </pre>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                <div className="mt-3 p-2 bg-gray-200 rounded border-2 border-gray-400">
+                  <p className="font-bold text-sm text-gray-900">
+                    {t.summary.totalGarageCollection}: {formatNumber((billData.garage.motorcycleSpaces * billData.garage.motorcycleSpaceAmount) + (billData.garage.carSpaces * billData.garage.carSpaceAmount))} {t.currency}
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {/* Combined Total Collection */}
+            {(billData.garage.motorcycleSpaces > 0 || billData.garage.carSpaces > 0) && (
+              <div className="mb-4 p-3 bg-blue-50 rounded border-2 border-blue-300">
+                <h2 className="text-sm font-bold text-gray-900 mb-2">{t.summary.combinedTotal}</h2>
+                <div className="grid grid-cols-2 gap-2 text-xs mb-2">
+                  <div>
+                    <p className="text-gray-600">{t.summary.totalFlatCollection}:</p>
+                    <p className="font-bold text-gray-900">{formatNumber(summary.grandTotal)} {t.currency}</p>
+                  </div>
+                  <div>
+                    <p className="text-gray-600">{t.summary.totalGarageCollection}:</p>
+                    <p className="font-bold text-gray-900">{formatNumber((billData.garage.motorcycleSpaces * billData.garage.motorcycleSpaceAmount) + (billData.garage.carSpaces * billData.garage.carSpaceAmount))} {t.currency}</p>
+                  </div>
+                </div>
+                <div className="pt-2 border-t-2 border-blue-400">
+                  <p className="text-gray-700 text-xs font-medium">{t.summary.flatsPlusGarage}:</p>
+                  <p className="font-bold text-lg text-gray-900">{formatNumber(summary.grandTotal + (billData.garage.motorcycleSpaces * billData.garage.motorcycleSpaceAmount) + (billData.garage.carSpaces * billData.garage.carSpaceAmount))} {t.currency}</p>
+                </div>
+              </div>
+            )}
 
             {/* Payment Info */}
             {billData.paymentInfo && (
