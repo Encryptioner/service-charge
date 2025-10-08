@@ -22,6 +22,7 @@ export default function BillPreview({
   const t = getTranslations(language);
   const uiMsgs = getUIMessages(language);
   const printRef = useRef<HTMLDivElement>(null);
+  const offscreenRef = useRef<HTMLDivElement>(null);
   const currentDate = new Date().toLocaleString(getLocaleCode(language), {
     year: 'numeric',
     month: 'long',
@@ -31,7 +32,7 @@ export default function BillPreview({
   });
 
   const generateCanvas = async () => {
-    if (!printRef.current) return null;
+    if (!offscreenRef.current) return null;
 
     // Inject CSS to override OKLCH color variables with hex equivalents
     const styleOverride = document.createElement('style');
@@ -103,14 +104,16 @@ export default function BillPreview({
     // Wait a tick for styles to apply
     await new Promise(resolve => setTimeout(resolve, 100));
 
-    const canvas = await html2canvas(printRef.current, {
-      scale: 1.5,
+    const canvas = await html2canvas(offscreenRef.current, {
+      scale: 2,
       logging: false,
       useCORS: true,
       allowTaint: true,
       backgroundColor: '#ffffff',
       removeContainer: false,
       imageTimeout: 0,
+      width: 794, // A4 width in pixels at 96 DPI (210mm)
+      windowWidth: 794,
     });
 
     // Remove the style override
@@ -192,93 +195,42 @@ export default function BillPreview({
     }
   };
 
-  return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 overflow-y-auto">
-      <div className="bg-white rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col my-4 md:my-0">
-        {/* Header */}
-        <div className="flex justify-between items-center p-3 md:p-4 border-b bg-gray-50 flex-wrap gap-2">
-          <h2 className="text-lg md:text-xl font-bold text-gray-900">{t.preview.title}</h2>
-          <div className="flex gap-2 flex-wrap">
-            <button
-              onClick={handleDownloadPDF}
-              className="px-3 py-2 text-sm md:px-4 md:text-base bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium flex items-center gap-2"
-            >
-              <svg className="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                />
-              </svg>
-              <span className="hidden sm:inline">{t.actions.download}</span>
-              <span className="sm:hidden">PDF</span>
-            </button>
-            <button
-              onClick={handleDownloadImage}
-              className="px-3 py-2 text-sm md:px-4 md:text-base bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium flex items-center gap-2"
-            >
-              <svg className="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-                />
-              </svg>
-              <span className="hidden sm:inline">{t.actions.downloadImage}</span>
-              <span className="sm:hidden">IMG</span>
-            </button>
-            <button
-              onClick={onClose}
-              className="px-3 py-2 text-sm md:px-4 md:text-base bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors font-medium"
-            >
-              {t.preview.close}
-            </button>
-          </div>
-        </div>
-
-        {/* Preview Content */}
-        <div className="flex-1 overflow-y-auto p-2 md:p-8 bg-gray-100">
-          <div
-            ref={printRef}
-            className="bg-white p-4 md:p-8 shadow-lg mx-auto overflow-x-auto"
-            style={{ maxWidth: '210mm' }}
-          >
+  const BillContent = () => (
+    <>
             {/* Bill Header */}
-            <div className="text-center mb-6 md:mb-8 pb-4 md:pb-6 border-b-2 border-gray-300">
-              <h1 className="text-xl md:text-3xl font-bold text-gray-900 mb-2">
+            <div className="text-center mb-8 pb-6 border-b-2 border-gray-300">
+              <h1 className="text-3xl font-bold text-gray-900 mb-2">
                 {billData.title || t.header.title}
               </h1>
-              <p className="text-xs md:text-sm text-gray-600 mb-1">
+              <p className="text-sm text-gray-600 mb-1">
                 {t.preview.printedOn}: {currentDate}
               </p>
-              <p className="text-xs md:text-sm font-semibold text-blue-600">
+              <p className="text-sm font-semibold text-blue-600">
                 {uiMsgs.numberOfFlats}: {billData.numberOfFlats}
               </p>
             </div>
 
             {/* Categories Table */}
-            <div className="mb-6 md:mb-8 overflow-x-auto">
-              <h2 className="text-lg md:text-xl font-bold text-gray-900 mb-4">
+            <div className="mb-8">
+              <h2 className="text-xl font-bold text-gray-900 mb-4">
                 {t.category.title}
               </h2>
-              <table className="w-full border-collapse min-w-[600px]">
+              <table className="w-full border-collapse">
                 <thead>
                   <tr className="bg-gray-100">
-                    <th className="border border-gray-300 px-4 py-2 text-left">
+                    <th className="border border-gray-300 px-3 py-2 text-left text-sm">
                       {t.preview.category}
                     </th>
-                    <th className="border border-gray-300 px-4 py-2 text-left">
+                    <th className="border border-gray-300 px-3 py-2 text-left text-sm">
                       {t.preview.duration}
                     </th>
-                    <th className="border border-gray-300 px-4 py-2 text-left">
+                    <th className="border border-gray-300 px-3 py-2 text-left text-sm">
                       {t.preview.info}
                     </th>
-                    <th className="border border-gray-300 px-4 py-2 text-left">
+                    <th className="border border-gray-300 px-3 py-2 text-left text-sm">
                       {t.preview.type}
                     </th>
-                    <th className="border border-gray-300 px-4 py-2 text-right">
+                    <th className="border border-gray-300 px-3 py-2 text-right text-sm">
                       {t.preview.amount}
                     </th>
                   </tr>
@@ -288,21 +240,21 @@ export default function BillPreview({
                     const perFlat = summary.categoryTotals.get(category.id) || 0;
                     return (
                       <tr key={category.id}>
-                        <td className="border border-gray-300 px-4 py-2 font-medium">
+                        <td className="border border-gray-300 px-3 py-2 font-medium text-sm">
                           {category.name}
                         </td>
-                        <td className="border border-gray-300 px-4 py-2 text-sm">
+                        <td className="border border-gray-300 px-3 py-2 text-xs">
                           {category.duration}
                         </td>
-                        <td className="border border-gray-300 px-4 py-2 text-sm">
+                        <td className="border border-gray-300 px-3 py-2 text-xs">
                           {category.info}
                         </td>
-                        <td className="border border-gray-300 px-4 py-2 text-sm">
+                        <td className="border border-gray-300 px-3 py-2 text-xs">
                           {category.billType === 'single-flat'
                             ? t.category.singleFlat
                             : `${formatNumber(category.amount)} ÷ ${billData.numberOfFlats}`}
                         </td>
-                        <td className="border border-gray-300 px-4 py-2 text-right font-medium">
+                        <td className="border border-gray-300 px-3 py-2 text-right font-medium text-sm">
                           {formatNumber(perFlat)} {t.currency}
                         </td>
                       </tr>
@@ -383,11 +335,11 @@ export default function BillPreview({
 
             {/* Garage Space Information */}
             {(billData.garage.motorcycleSpaces > 0 || billData.garage.carSpaces > 0) && (
-              <div className="mb-4">
+              <div className="mb-6">
                 <h2 className="text-lg font-bold text-gray-900 mb-3">
                   {t.summary.garageCollection}
                 </h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div className="grid grid-cols-2 gap-3">
                   {billData.garage.motorcycleSpaces > 0 && (
                     <div className="p-3 bg-gray-100 rounded border border-gray-300">
                       <h3 className="font-bold text-gray-900 mb-2 text-sm">{t.form.motorcycleSpaces}</h3>
@@ -449,9 +401,9 @@ export default function BillPreview({
 
             {/* Combined Total Collection */}
             {(billData.garage.motorcycleSpaces > 0 || billData.garage.carSpaces > 0) && (
-              <div className="mb-4 p-3 bg-blue-50 rounded border-2 border-blue-300">
-                <h2 className="text-sm font-bold text-gray-900 mb-2">{t.summary.combinedTotal}</h2>
-                <div className="grid grid-cols-2 gap-2 text-xs mb-2">
+              <div className="mb-6 p-4 bg-blue-50 rounded border-2 border-blue-300">
+                <h2 className="text-base font-bold text-gray-900 mb-3">{t.summary.combinedTotal}</h2>
+                <div className="grid grid-cols-2 gap-3 text-sm mb-3">
                   <div>
                     <p className="text-gray-600">{t.summary.totalFlatCollection}:</p>
                     <p className="font-bold text-gray-900">{formatNumber(summary.grandTotal)} {t.currency}</p>
@@ -461,17 +413,17 @@ export default function BillPreview({
                     <p className="font-bold text-gray-900">{formatNumber((billData.garage.motorcycleSpaces * billData.garage.motorcycleSpaceAmount) + (billData.garage.carSpaces * billData.garage.carSpaceAmount))} {t.currency}</p>
                   </div>
                 </div>
-                <div className="pt-2 border-t-2 border-blue-400">
-                  <p className="text-gray-700 text-xs font-medium">{t.summary.flatsPlusGarage}:</p>
-                  <p className="font-bold text-lg text-gray-900">{formatNumber(summary.grandTotal + (billData.garage.motorcycleSpaces * billData.garage.motorcycleSpaceAmount) + (billData.garage.carSpaces * billData.garage.carSpaceAmount))} {t.currency}</p>
+                <div className="pt-3 border-t-2 border-blue-400">
+                  <p className="text-gray-700 text-sm font-medium">{t.summary.flatsPlusGarage}:</p>
+                  <p className="font-bold text-xl text-gray-900">{formatNumber(summary.grandTotal + (billData.garage.motorcycleSpaces * billData.garage.motorcycleSpaceAmount) + (billData.garage.carSpaces * billData.garage.carSpaceAmount))} {t.currency}</p>
                 </div>
               </div>
             )}
 
             {/* Payment Info */}
             {billData.paymentInfo && (
-              <div className="mb-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
-                <h3 className="font-bold text-gray-900 mb-2">
+              <div className="mb-6 p-4 bg-gray-50 rounded border border-gray-200">
+                <h3 className="font-bold text-gray-900 mb-2 text-base">
                   {t.form.paymentInfo}
                 </h3>
                 <pre className="text-sm text-gray-700 whitespace-pre-wrap font-sans">
@@ -482,8 +434,8 @@ export default function BillPreview({
 
             {/* Notes */}
             {billData.notes && (
-              <div className="mb-6 p-4 bg-yellow-50 rounded-lg border border-yellow-200">
-                <h3 className="font-bold text-gray-900 mb-2">{t.form.notes}</h3>
+              <div className="mb-6 p-4 bg-yellow-50 rounded border border-yellow-200">
+                <h3 className="font-bold text-gray-900 mb-2 text-base">{t.form.notes}</h3>
                 <pre className="text-sm text-gray-700 whitespace-pre-wrap font-sans">
                   {billData.notes}
                 </pre>
@@ -499,6 +451,80 @@ export default function BillPreview({
                 </a>
               </p>
             </div>
+    </>
+  );
+
+  return (
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 overflow-y-auto">
+      {/* Off-screen fixed-width version for PDF/image generation */}
+      <div
+        ref={offscreenRef}
+        className="absolute"
+        style={{
+          position: 'absolute',
+          left: '-9999px',
+          top: '0',
+          width: '794px', // A4 width at 96 DPI
+          padding: '32px',
+          backgroundColor: '#ffffff',
+        }}
+      >
+        <BillContent />
+      </div>
+
+      {/* Visible preview modal */}
+      <div className="bg-white rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col my-4 md:my-0">
+        {/* Header */}
+        <div className="flex justify-between items-center p-3 md:p-4 border-b bg-gray-50 flex-wrap gap-2">
+          <h2 className="text-lg md:text-xl font-bold text-gray-900">{t.preview.title}</h2>
+          <div className="flex gap-2 flex-wrap">
+            <button
+              onClick={handleDownloadPDF}
+              className="px-3 py-2 text-sm md:px-4 md:text-base bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium flex items-center gap-2"
+            >
+              <svg className="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                />
+              </svg>
+              <span className="hidden sm:inline">{t.actions.download}</span>
+              <span className="sm:hidden">PDF</span>
+            </button>
+            <button
+              onClick={handleDownloadImage}
+              className="px-3 py-2 text-sm md:px-4 md:text-base bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium flex items-center gap-2"
+            >
+              <svg className="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                />
+              </svg>
+              <span className="hidden sm:inline">{t.actions.downloadImage}</span>
+              <span className="sm:hidden">IMG</span>
+            </button>
+            <button
+              onClick={onClose}
+              className="px-3 py-2 text-sm md:px-4 md:text-base bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors font-medium"
+            >
+              {t.preview.close}
+            </button>
+          </div>
+        </div>
+
+        {/* Preview Content */}
+        <div className="flex-1 overflow-y-auto p-2 md:p-8 bg-gray-100">
+          <div
+            ref={printRef}
+            className="bg-white p-4 md:p-8 shadow-lg mx-auto overflow-x-auto"
+            style={{ maxWidth: '210mm' }}
+          >
+            <BillContent />
           </div>
         </div>
       </div>
