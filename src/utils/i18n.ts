@@ -18,7 +18,7 @@ export type TranslationKey = typeof bn;
  * Get translations for a specific language
  */
 export const getTranslations = (language: SupportedLanguage): TranslationKey => {
-  return translations[language] || translations.bn;
+  return translations[language as keyof typeof translations] || translations.bn;
 };
 
 /**

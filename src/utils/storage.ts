@@ -1,18 +1,25 @@
 import type { BillData } from '../types';
 
-const STORAGE_KEY = 'service-charge-bill-data';
+const STORAGE_KEY_CALCULATED = 'service-charge-bill-data-calculated';
+const STORAGE_KEY_BLANK = 'service-charge-bill-data-blank';
 
-export function saveBillData(data: BillData): void {
+export type FormMode = 'calculated' | 'blank';
+
+function getStorageKey(mode: FormMode): string {
+  return mode === 'calculated' ? STORAGE_KEY_CALCULATED : STORAGE_KEY_BLANK;
+}
+
+export function saveBillData(data: BillData, mode: FormMode = 'calculated'): void {
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    localStorage.setItem(getStorageKey(mode), JSON.stringify(data));
   } catch (error) {
     console.error('Failed to save bill data:', error);
   }
 }
 
-export function loadBillData(): BillData | null {
+export function loadBillData(mode: FormMode = 'calculated'): BillData | null {
   try {
-    const data = localStorage.getItem(STORAGE_KEY);
+    const data = localStorage.getItem(getStorageKey(mode));
     if (!data) return null;
 
     const parsed = JSON.parse(data);
@@ -36,9 +43,9 @@ export function loadBillData(): BillData | null {
   }
 }
 
-export function clearBillData(): void {
+export function clearBillData(mode: FormMode = 'calculated'): void {
   try {
-    localStorage.removeItem(STORAGE_KEY);
+    localStorage.removeItem(getStorageKey(mode));
   } catch (error) {
     console.error('Failed to clear bill data:', error);
   }

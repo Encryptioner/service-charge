@@ -196,12 +196,9 @@ export default function BlankFormPreview({
     <>
       {/* Bill Header */}
       <div className="text-center mb-8 pb-6 border-b-2 border-gray-300">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">
+        <h1 className="text-3xl font-bold text-gray-900 mb-3">
           {billData.title || t.header.title}
         </h1>
-        <p className="text-sm text-gray-600 mb-1">
-          {t.preview.printedOn}: {currentDate}
-        </p>
         <p className="text-sm font-semibold text-blue-600">
           {uiMsgs.numberOfFlats}: <span className="inline-block min-w-[60px] border-b-2 border-blue-500 border-dashed mx-1"></span>
         </p>
@@ -271,7 +268,7 @@ export default function BlankFormPreview({
             </tr>
             <tr className="bg-gray-50">
               <td
-                colSpan={5}
+                colSpan={6}
                 className="border border-gray-300 px-3 py-1 text-right text-xs text-gray-600 italic"
               >
                 {t.summary.inWords}: <span className="inline-block min-w-[300px] border-b border-gray-400 border-dashed ml-2"></span>

@@ -91,3 +91,4 @@ When updating author information or footer:
 - **PDF color rendering**: App handles OKLCH→RGB conversion automatically
 - **Print pagination**: Fixed - bill fits on single page
 - **React hydration**: Fixed - language loads from localStorage correctly
+- **Node version mismatch or too old**: Run `nvm use 22` in bash and use that node version

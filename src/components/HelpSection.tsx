@@ -1,17 +1,25 @@
 import type { SupportedLanguage } from '../locales/config';
+import type { FormMode } from '../utils/storage';
 import { getTranslations, getUIMessages } from '../utils/i18n';
 
 interface HelpSectionProps {
   language: SupportedLanguage;
+  mode: FormMode;
   onClose: () => void;
 }
 
-export default function HelpSection({ language, onClose }: HelpSectionProps) {
+export default function HelpSection({ language, mode, onClose }: HelpSectionProps) {
   const t = getTranslations(language);
   const uiMsgs = getUIMessages(language);
 
+  const isCalculatedMode = mode === 'calculated';
+
   return (
-    <div className="bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl shadow-lg p-6 mb-6 text-white">
+    <div className={`rounded-xl shadow-lg p-6 mb-6 text-white ${
+      isCalculatedMode
+        ? 'bg-gradient-to-r from-blue-500 to-purple-600'
+        : 'bg-gradient-to-r from-purple-500 to-pink-600'
+    }`}>
       <div className="flex justify-between items-start mb-4">
         <div className="flex items-center gap-3">
           <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -42,23 +50,25 @@ export default function HelpSection({ language, onClose }: HelpSectionProps) {
       </div>
 
       <div className="space-y-3 mb-4">
-        <p className="text-white/90">{t.help.welcome}</p>
+        <p className="text-white/90 font-medium">
+          {isCalculatedMode ? t.help.calculatedWelcome : t.help.blankWelcome}
+        </p>
         <ul className="space-y-2 ml-4">
           <li className="flex items-start gap-2">
             <span className="text-yellow-300 font-bold">→</span>
-            <span>{t.help.step1}</span>
+            <span>{isCalculatedMode ? t.help.calculatedStep1 : t.help.blankStep1}</span>
           </li>
           <li className="flex items-start gap-2">
             <span className="text-yellow-300 font-bold">→</span>
-            <span>{t.help.step2}</span>
+            <span>{isCalculatedMode ? t.help.calculatedStep2 : t.help.blankStep2}</span>
           </li>
           <li className="flex items-start gap-2">
             <span className="text-yellow-300 font-bold">→</span>
-            <span>{t.help.step3}</span>
+            <span>{isCalculatedMode ? t.help.calculatedStep3 : t.help.blankStep3}</span>
           </li>
           <li className="flex items-start gap-2">
             <span className="text-yellow-300 font-bold">→</span>
-            <span>{t.help.step4}</span>
+            <span>{isCalculatedMode ? t.help.calculatedStep4 : t.help.blankStep4}</span>
           </li>
         </ul>
       </div>

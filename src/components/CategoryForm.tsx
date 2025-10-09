@@ -1,9 +1,10 @@
 import type { ServiceCategory } from '../types';
-import { translations, type Language } from '../locales';
+import type { SupportedLanguage } from '../locales/config';
+import { translations } from '../locales';
 
 interface CategoryFormProps {
   category: ServiceCategory;
-  language: Language;
+  language: SupportedLanguage;
   onUpdate: (updates: Partial<ServiceCategory>) => void;
   onRemove: () => void;
   validationErrors?: { name?: string; amount?: string };
@@ -18,7 +19,7 @@ export default function CategoryForm({
   validationErrors,
   isBlankMode = false,
 }: CategoryFormProps) {
-  const t = translations[language];
+  const t = translations[language as keyof typeof translations];
 
   return (
     <div className="border border-gray-200 rounded-lg p-4 bg-gray-50">

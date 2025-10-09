@@ -1,10 +1,9 @@
 import { useState, useRef, useEffect } from 'react';
-import { AVAILABLE_LANGUAGES, getLanguageConfig, type LanguageConfig } from '../locales';
-import type { Language } from '../locales';
+import { AVAILABLE_LANGUAGES, getLanguageConfig, type LanguageConfig, type SupportedLanguage } from '../locales';
 
 interface LanguageSelectorProps {
-  currentLanguage: Language;
-  onLanguageChange: (language: Language) => void;
+  currentLanguage: SupportedLanguage;
+  onLanguageChange: (language: SupportedLanguage) => void;
 }
 
 export default function LanguageSelector({ currentLanguage, onLanguageChange }: LanguageSelectorProps) {
@@ -28,7 +27,7 @@ export default function LanguageSelector({ currentLanguage, onLanguageChange }: 
   }, [isOpen]);
 
   const handleLanguageSelect = (langCode: string) => {
-    onLanguageChange(langCode as Language);
+    onLanguageChange(langCode as SupportedLanguage);
     setIsOpen(false);
   };
 

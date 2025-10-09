@@ -1,4 +1,4 @@
-import type { Language } from '../locales';
+import type { SupportedLanguage } from '../locales/config';
 
 interface ConfirmModalProps {
   isOpen: boolean;
@@ -8,7 +8,7 @@ interface ConfirmModalProps {
   message: string;
   confirmText: string;
   cancelText: string;
-  language: Language;
+  language: SupportedLanguage;
 }
 
 export default function ConfirmModal({

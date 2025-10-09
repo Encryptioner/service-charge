@@ -22,7 +22,9 @@ const config = {
   },
 };
 
-const deployConfig = config[DEPLOY_TARGET] || config.custom;
+const deployConfig = (DEPLOY_TARGET === 'github' || DEPLOY_TARGET === 'custom')
+  ? config[DEPLOY_TARGET]
+  : config.custom;
 
 // https://astro.build/config
 export default defineConfig({
