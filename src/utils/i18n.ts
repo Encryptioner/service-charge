@@ -108,7 +108,7 @@ export const getConfirmationMessages = (language: string) => {
 export const getUIMessages = (language: string) => {
   const messages: Record<string, Record<string, string>> = {
     en: {
-      quickGuide: 'Quick Guide',
+      quickGuide: 'Guide',
       help: 'Help',
       example: 'Example',
       numberOfFlats: 'Number of Flats',
@@ -118,7 +118,7 @@ export const getUIMessages = (language: string) => {
       pdfGenerationError: 'Failed to generate PDF. Please try again.',
     },
     bn: {
-      quickGuide: 'দ্রুত গাইড',
+      quickGuide: 'গাইড',
       help: 'সাহায্য',
       example: 'উদাহরণ',
       numberOfFlats: 'ফ্ল্যাটের সংখ্যা',

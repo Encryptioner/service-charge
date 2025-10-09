@@ -79,7 +79,7 @@ export const bn = {
     inWords: 'কথায়',
   },
   actions: {
-    loadExample: 'উদাহরণ ডেটা লোড করুন',
+    loadExample: 'উদাহরণ লোড করুন',
     clearAll: 'সব মুছুন',
     preview: 'প্রিভিউ',
     download: 'পিডিএফ ডাউনলোড',

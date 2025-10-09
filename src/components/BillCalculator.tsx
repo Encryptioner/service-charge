@@ -36,29 +36,29 @@ export default function BillCalculator() {
   const [language, setLanguage] = useState<SupportedLanguage>('bn');
   const [isClient, setIsClient] = useState(false);
 
-  // Initialize language on client side only
+  // Initialize language and form mode on client side only
   useEffect(() => {
     setIsClient(true);
     const savedLang = localStorage.getItem('preferred-language');
     if (savedLang && isLanguageSupported(savedLang)) {
       setLanguage(savedLang);
     }
+
+    const savedMode = localStorage.getItem('preferred-form-mode');
+    if (savedMode === 'blank' || savedMode === 'calculated') {
+      setFormMode(savedMode);
+    }
   }, []);
 
   const [billData, setBillData] = useState<BillData>(getEmptyBillData());
 
   // Initialize form mode from localStorage or default to 'calculated'
-  const [formMode, setFormMode] = useState<'calculated' | 'blank'>(() => {
-    if (typeof window !== 'undefined') {
-      const savedMode = localStorage.getItem('preferred-form-mode');
-      return (savedMode === 'blank' || savedMode === 'calculated') ? savedMode : 'calculated';
-    }
-    return 'calculated';
-  });
+  const [formMode, setFormMode] = useState<'calculated' | 'blank'>('calculated');
 
   const [showPreview, setShowPreview] = useState(false);
   const [showHelp, setShowHelp] = useState(false); // Start with false to prevent flash
   const [showClearConfirm, setShowClearConfirm] = useState(false);
+  const [isHeaderCollapsed, setIsHeaderCollapsed] = useState(false);
   const [validationErrors, setValidationErrors] = useState<{
     title?: string;
     numberOfFlats?: string;
@@ -112,6 +112,7 @@ export default function BillCalculator() {
   useEffect(() => {
     localStorage.setItem('preferred-form-mode', formMode);
   }, [formMode]);
+
 
   const validateForm = () => {
     const errors: typeof validationErrors = {};
@@ -243,11 +244,61 @@ export default function BillCalculator() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
-      {/* Header */}
-      <header className="bg-white shadow-sm sticky top-0 z-10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-            <div>
+      {/* Sticky Header Container */}
+      <div className="sticky top-0 z-20">
+        {/* Collapsed Mini Header */}
+        <div className={`bg-white shadow-md transition-all duration-300 ${
+          isHeaderCollapsed ? 'h-14 opacity-100' : 'h-0 opacity-0'
+        } overflow-hidden`}>
+          <div className="h-14 flex items-center px-4 gap-3 max-w-7xl mx-auto">
+            <div className="flex items-center gap-3 flex-1 min-w-0">
+              <h1 className="text-sm md:text-lg font-bold text-gray-900 truncate">
+                {t.header.title}
+              </h1>
+              {/* Show mode indicator on desktop */}
+              <span className="hidden md:inline-flex items-center px-2.5 py-1 rounded-md text-xs font-medium bg-blue-100 text-blue-800 whitespace-nowrap">
+                {formMode === 'calculated' ? t.tabs.calculatedMode : t.tabs.blankFormMode}
+              </span>
+            </div>
+            <div className="flex items-center gap-2 flex-shrink-0">
+              {/* Language selector on desktop */}
+              <div className="hidden md:block">
+                <LanguageSelector currentLanguage={language} onLanguageChange={setLanguage} />
+              </div>
+              {/* Expand button - always on the right */}
+              <button
+                onClick={() => setIsHeaderCollapsed(false)}
+                className="p-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors shadow-md"
+                aria-label="Expand header"
+                title="Expand header"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Full Header */}
+        <header className={`bg-white shadow-sm transition-all duration-300 ${
+          isHeaderCollapsed ? 'hidden' : 'block'
+        }`}>
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 relative">
+            {/* Collapse button - Fixed in top right */}
+            <button
+              onClick={() => setIsHeaderCollapsed(true)}
+              className="absolute top-2 right-2 sm:top-4 sm:right-4 p-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors shadow-md z-10"
+              aria-label="Collapse header"
+              title="Collapse header"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M5 15l7-7 7 7" />
+              </svg>
+            </button>
+
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pr-12">
+            <div className="flex-1">
               <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
                 {t.header.title}
               </h1>
@@ -345,8 +396,9 @@ export default function BillCalculator() {
               </div>
             </div>
           </div>
-        </div>
-      </header>
+          </div>
+        </header>
+      </div>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {showHelp && <HelpSection language={language} mode={formMode} onClose={() => setShowHelp(false)} />}
