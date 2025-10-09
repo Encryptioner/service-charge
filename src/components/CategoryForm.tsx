@@ -7,6 +7,7 @@ interface CategoryFormProps {
   onUpdate: (updates: Partial<ServiceCategory>) => void;
   onRemove: () => void;
   validationErrors?: { name?: string; amount?: string };
+  isBlankMode?: boolean;
 }
 
 export default function CategoryForm({
@@ -15,6 +16,7 @@ export default function CategoryForm({
   onUpdate,
   onRemove,
   validationErrors,
+  isBlankMode = false,
 }: CategoryFormProps) {
   const t = translations[language];
 
@@ -69,45 +71,49 @@ export default function CategoryForm({
         </div>
 
         {/* Bill Type */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            {t.category.billType} <span className="text-red-600">*</span>
-          </label>
-          <select
-            value={category.billType}
-            onChange={(e) =>
-              onUpdate({ billType: e.target.value as 'single-flat' | 'all-building' })
-            }
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
-          >
-            <option value="single-flat">{t.category.singleFlat}</option>
-            <option value="all-building">{t.category.allBuilding}</option>
-          </select>
-        </div>
+        {!isBlankMode && (
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              {t.category.billType} <span className="text-red-600">*</span>
+            </label>
+            <select
+              value={category.billType}
+              onChange={(e) =>
+                onUpdate({ billType: e.target.value as 'single-flat' | 'all-building' })
+              }
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
+            >
+              <option value="single-flat">{t.category.singleFlat}</option>
+              <option value="all-building">{t.category.allBuilding}</option>
+            </select>
+          </div>
+        )}
 
         {/* Amount */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            {t.category.amount} <span className="text-red-600">*</span>
-            <span className="text-xs text-gray-500 ml-2">
-              ({category.billType === 'single-flat' ? t.category.perFlat : t.category.total})
-            </span>
-          </label>
-          <input
-            type="number"
-            value={category.amount || ''}
-            onChange={(e) => onUpdate({ amount: parseFloat(e.target.value) || 0 })}
-            placeholder={t.category.amountPlaceholder}
-            min="1"
-            step="0.01"
-            className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white ${
-              validationErrors?.amount ? 'border-red-500' : 'border-gray-300'
-            }`}
-          />
-          {validationErrors?.amount && (
-            <p className="mt-1 text-sm text-red-600">{validationErrors.amount}</p>
-          )}
-        </div>
+        {!isBlankMode && (
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              {t.category.amount} <span className="text-red-600">*</span>
+              <span className="text-xs text-gray-500 ml-2">
+                ({category.billType === 'single-flat' ? t.category.perFlat : t.category.total})
+              </span>
+            </label>
+            <input
+              type="number"
+              value={category.amount || ''}
+              onChange={(e) => onUpdate({ amount: parseFloat(e.target.value) || 0 })}
+              placeholder={t.category.amountPlaceholder}
+              min="1"
+              step="0.01"
+              className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white ${
+                validationErrors?.amount ? 'border-red-500' : 'border-gray-300'
+              }`}
+            />
+            {validationErrors?.amount && (
+              <p className="mt-1 text-sm text-red-600">{validationErrors.amount}</p>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Remove Button */}

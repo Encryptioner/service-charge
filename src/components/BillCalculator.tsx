@@ -9,6 +9,7 @@ import { getTranslations, getValidationMessages, getConfirmationMessages, getUIM
 import { numberToWords } from '../utils/numberToWords';
 import CategoryForm from './CategoryForm';
 import BillPreview from './BillPreview';
+import BlankFormPreview from './BlankFormPreview';
 import HelpSection from './HelpSection';
 import LanguageSelector from './LanguageSelector';
 import ConfirmModal from './ConfirmModal';
@@ -42,6 +43,7 @@ export default function BillCalculator() {
     notes: '',
     categories: [],
   });
+  const [formMode, setFormMode] = useState<'calculated' | 'blank'>('calculated');
   const [showPreview, setShowPreview] = useState(false);
   const [showHelp, setShowHelp] = useState(false); // Start with false to prevent flash
   const [showClearConfirm, setShowClearConfirm] = useState(false);
@@ -274,6 +276,42 @@ export default function BillCalculator() {
               <LanguageSelector currentLanguage={language} onLanguageChange={setLanguage} />
             </div>
           </div>
+
+          {/* Mode Tabs */}
+          <div className="mt-4 border-b border-gray-200">
+            <div className="flex gap-2">
+              <button
+                onClick={() => setFormMode('calculated')}
+                className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
+                  formMode === 'calculated'
+                    ? 'border-blue-600 text-blue-600'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                }`}
+              >
+                <div className="flex items-center gap-2">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                  </svg>
+                  <span>{t.tabs.calculatedMode}</span>
+                </div>
+              </button>
+              <button
+                onClick={() => setFormMode('blank')}
+                className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
+                  formMode === 'blank'
+                    ? 'border-purple-600 text-purple-600'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                }`}
+              >
+                <div className="flex items-center gap-2">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                  <span>{t.tabs.blankFormMode}</span>
+                </div>
+              </button>
+            </div>
+          </div>
         </div>
       </header>
 
@@ -304,32 +342,35 @@ export default function BillCalculator() {
             </div>
 
             {/* Number of Flats */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                {t.form.numberOfFlats} <span className="text-red-600">*</span>
-                <span className="text-gray-500 text-xs ml-2">{t.form.numberOfFlatsHelp}</span>
-              </label>
-              <input
-                type="number"
-                value={billData.numberOfFlats || ''}
-                onChange={(e) => handleInputChange('numberOfFlats', parseInt(e.target.value) || 0)}
-                placeholder={t.form.numberOfFlatsPlaceholder}
-                min="1"
-                className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                  validationErrors.numberOfFlats ? 'border-red-500' : 'border-gray-300'
-                }`}
-              />
-              {validationErrors.numberOfFlats && (
-                <p className="mt-1 text-sm text-red-600">{validationErrors.numberOfFlats}</p>
-              )}
-            </div>
+            {formMode === 'calculated' && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  {t.form.numberOfFlats} <span className="text-red-600">*</span>
+                  <span className="text-gray-500 text-xs ml-2">{t.form.numberOfFlatsHelp}</span>
+                </label>
+                <input
+                  type="number"
+                  value={billData.numberOfFlats || ''}
+                  onChange={(e) => handleInputChange('numberOfFlats', parseInt(e.target.value) || 0)}
+                  placeholder={t.form.numberOfFlatsPlaceholder}
+                  min="1"
+                  className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                    validationErrors.numberOfFlats ? 'border-red-500' : 'border-gray-300'
+                  }`}
+                />
+                {validationErrors.numberOfFlats && (
+                  <p className="mt-1 text-sm text-red-600">{validationErrors.numberOfFlats}</p>
+                )}
+              </div>
+            )}
 
             {/* Garage Spaces Section */}
-            <div className="md:col-span-2">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-200">
-                {t.form.garageSpaces}
-              </h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {formMode === 'calculated' && (
+              <div className="md:col-span-2">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-200">
+                  {t.form.garageSpaces}
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Motorcycle Spaces */}
                 <div className="space-y-4 p-4 bg-blue-50 rounded-lg">
                   <h4 className="font-medium text-gray-900">{t.form.motorcycleSpaces}</h4>
@@ -436,7 +477,8 @@ export default function BillCalculator() {
                   )}
                 </div>
               </div>
-            </div>
+              </div>
+            )}
 
             {/* Payment Info */}
             <div className="md:col-span-2">
@@ -494,6 +536,7 @@ export default function BillCalculator() {
                 onUpdate={(updates) => updateCategory(category.id, updates)}
                 onRemove={() => removeCategory(category.id)}
                 validationErrors={validationErrors.categories?.[category.id]}
+                isBlankMode={formMode === 'blank'}
               />
             ))}
           </div>
@@ -506,7 +549,7 @@ export default function BillCalculator() {
         </div>
 
         {/* Summary */}
-        {billData.categories.length > 0 && billData.numberOfFlats > 0 && (
+        {formMode === 'calculated' && billData.categories.length > 0 && billData.numberOfFlats > 0 && (
           <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl shadow-lg p-6 mb-6 text-white">
             <h2 className="text-xl font-bold mb-4">{t.summary.flatCollectionSummary}</h2>
 
@@ -611,7 +654,7 @@ export default function BillCalculator() {
                   <div>
                     <p className="opacity-90">{t.summary.totalFlatCollection}:</p>
                     <p className="font-bold text-xl">
-                      {billData.numberOfFlats} × {formatNumber(summary.perFlatTotal)} = {formatNumber(summary.grandTotal)} {t.currency}
+                      {formatNumber(summary.grandTotal)} {t.currency}
                     </p>
                   </div>
                   <div>
@@ -648,8 +691,15 @@ export default function BillCalculator() {
           </button>
           <button
             onClick={() => {
-              if (validateForm()) {
-                setShowPreview(true);
+              if (formMode === 'calculated') {
+                if (validateForm()) {
+                  setShowPreview(true);
+                }
+              } else {
+                // Blank mode - only validate title and categories exist
+                if (billData.title.trim() && billData.categories.length > 0) {
+                  setShowPreview(true);
+                }
               }
             }}
             disabled={billData.categories.length === 0}
@@ -728,12 +778,20 @@ export default function BillCalculator() {
         language={language}
       />
 
-      {/* Preview Modal */}
-      {showPreview && (
+      {/* Preview Modals */}
+      {showPreview && formMode === 'calculated' && (
         <BillPreview
           billData={billData}
           language={language}
           summary={summary}
+          onClose={() => setShowPreview(false)}
+        />
+      )}
+
+      {showPreview && formMode === 'blank' && (
+        <BlankFormPreview
+          billData={billData}
+          language={language}
           onClose={() => setShowPreview(false)}
         />
       )}

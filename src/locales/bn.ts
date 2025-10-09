@@ -94,6 +94,14 @@ export const bn = {
     info: 'তথ্য',
     type: 'ধরন',
     amount: 'পরিমাণ',
+    calculatedBill: 'গণনাকৃত বিল',
+    blankForm: 'খালি ফর্ম',
+  },
+  tabs: {
+    calculatedMode: 'গণনাকৃত মোড',
+    blankFormMode: 'খালি ফর্ম মোড',
+    calculatedModeDesc: 'পরিমাণ সহ স্বয়ংক্রিয়ভাবে বিল গণনা করুন',
+    blankFormModeDesc: 'প্রিন্টযোগ্য খালি ফর্ম তৈরি করুন',
   },
   footer: {
     createdBy: 'তৈরি করেছেন',

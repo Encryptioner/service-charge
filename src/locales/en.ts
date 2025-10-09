@@ -94,6 +94,14 @@ export const en = {
     info: 'Info',
     type: 'Type',
     amount: 'Amount',
+    calculatedBill: 'Calculated Bill',
+    blankForm: 'Blank Form',
+  },
+  tabs: {
+    calculatedMode: 'Calculated Mode',
+    blankFormMode: 'Blank Form Mode',
+    calculatedModeDesc: 'Auto-calculate bills with amounts',
+    blankFormModeDesc: 'Create printable blank forms',
   },
   footer: {
     createdBy: 'Created by',
