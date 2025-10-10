@@ -256,7 +256,7 @@ export default function BillCalculator() {
                 {t.header.title}
               </h1>
               {/* Show mode indicator on desktop */}
-              <span className="hidden md:inline-flex items-center px-2.5 py-1 rounded-md text-xs font-medium bg-blue-100 text-blue-800 whitespace-nowrap">
+              <span className="md:inline-flex items-center px-2.5 py-1 rounded-md text-xs font-medium bg-blue-100 text-blue-800 whitespace-nowrap">
                 {formMode === 'calculated' ? t.tabs.calculatedMode : t.tabs.blankFormMode}
               </span>
             </div>
