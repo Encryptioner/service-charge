@@ -78,6 +78,29 @@ export default function BillCalculator() {
     setShowHelp(!showHelp);
   };
 
+  // Auto-collapse header on scroll (mobile only)
+  useEffect(() => {
+    let lastScrollY = window.scrollY;
+
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      const isMobile = window.innerWidth < 768; // md breakpoint
+
+      // Only collapse on mobile when scrolling down and header is expanded
+      if (isMobile && !isHeaderCollapsed && currentScrollY > lastScrollY && currentScrollY > 50) {
+        setIsHeaderCollapsed(true);
+      }
+
+      lastScrollY = currentScrollY;
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, [isHeaderCollapsed]);
+
   // Load saved data when mode changes
   useEffect(() => {
     const savedData = loadBillData(formMode);
