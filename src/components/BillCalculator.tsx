@@ -278,10 +278,35 @@ export default function BillCalculator() {
               <h1 className="text-sm md:text-lg font-bold text-gray-900 truncate">
                 {t.header.title}
               </h1>
-              {/* Show mode indicator on desktop */}
-              <span className="md:inline-flex items-center px-2.5 py-1 rounded-md text-xs font-medium bg-blue-100 text-blue-800 whitespace-nowrap">
+              {/* Show mode indicator */}
+              <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-medium bg-blue-100 text-blue-800 whitespace-nowrap">
                 {formMode === 'calculated' ? t.tabs.calculatedMode : t.tabs.blankFormMode}
               </span>
+            </div>
+            {/* Action buttons - Desktop only */}
+            <div className="hidden md:flex items-center gap-2">
+              <button
+                onClick={handleToggleHelp}
+                className={`px-3 py-2 rounded-lg transition-all font-medium text-sm flex items-center gap-2 ${
+                  showHelp
+                    ? 'bg-blue-600 text-white hover:bg-blue-700 shadow-md'
+                    : 'bg-blue-100 text-blue-700 hover:bg-blue-200 border-2 border-blue-300'
+                }`}
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span>{uiMsgs.quickGuide}</span>
+              </button>
+              <button
+                onClick={loadExample}
+                className="px-3 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors font-medium text-sm flex items-center gap-2"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+                <span>{uiMsgs.example}</span>
+              </button>
             </div>
             <div className="flex items-center gap-2 flex-shrink-0">
               {/* Language selector on desktop */}
@@ -339,11 +364,8 @@ export default function BillCalculator() {
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
-                <span className="hidden sm:inline">
+                <span>
                   {uiMsgs.quickGuide}
-                </span>
-                <span className="sm:hidden">
-                  {uiMsgs.help}
                 </span>
               </button>
               <button
