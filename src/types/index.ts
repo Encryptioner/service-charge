@@ -25,6 +25,8 @@ export interface BillData {
   paymentInfo: string;
   notes: string;
   categories: ServiceCategory[];
+  showMotorcycleInBlankForm?: boolean; // Controls motorcycle space visibility in blank form preview
+  showCarInBlankForm?: boolean; // Controls car space visibility in blank form preview
 }
 
 export interface BillSummary {

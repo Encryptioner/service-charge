@@ -29,6 +29,8 @@ const getEmptyBillData = (): BillData => ({
   paymentInfo: '',
   notes: '',
   categories: [],
+  showMotorcycleInBlankForm: true, // Default to showing motorcycle spaces in blank form
+  showCarInBlankForm: true, // Default to showing car spaces in blank form
 });
 
 export default function BillCalculator() {
@@ -176,7 +178,7 @@ export default function BillCalculator() {
     return Object.keys(errors).length === 0;
   };
 
-  const handleInputChange = (field: keyof BillData, value: string | number) => {
+  const handleInputChange = (field: keyof BillData, value: string | number | boolean) => {
     setBillData((prev) => ({ ...prev, [field]: value }));
 
     // Clear validation error for this field
@@ -270,11 +272,18 @@ export default function BillCalculator() {
       {/* Sticky Header Container */}
       <div className="sticky top-0 z-20">
         {/* Collapsed Mini Header */}
-        <div className={`bg-white shadow-md transition-all duration-300 ${
+        <div className={`relative bg-white shadow-md transition-all duration-300 ${
           isHeaderCollapsed ? 'h-14 opacity-100' : 'h-0 opacity-0'
-        } overflow-hidden`}>
-          <div className="h-14 flex items-center px-4 gap-3 max-w-7xl mx-auto">
+        }`}>
+          <div className={`h-14 flex items-center px-4 gap-3 max-w-7xl mx-auto ${
+            !isHeaderCollapsed ? 'overflow-hidden' : ''
+          }`}>
             <div className="flex items-center gap-3 flex-1 min-w-0">
+              <img
+                src={`${import.meta.env.BASE_URL}icon.svg`}
+                alt="Service Charge Icon"
+                className="w-8 h-8 flex-shrink-0"
+              />
               <h1 className="text-sm md:text-lg font-bold text-gray-900 truncate">
                 {t.header.title}
               </h1>
@@ -347,10 +356,19 @@ export default function BillCalculator() {
 
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pr-12">
             <div className="flex-1">
-              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
-                {t.header.title}
-              </h1>
-              <p className="text-sm text-gray-600 mt-1">{t.header.subtitle}</p>
+              <div className="flex items-center gap-3">
+                <img
+                  src={`${import.meta.env.BASE_URL}icon.svg`}
+                  alt="Service Charge Icon"
+                  className="w-10 h-10 sm:w-12 sm:h-12 flex-shrink-0"
+                />
+                <div>
+                  <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
+                    {t.header.title}
+                  </h1>
+                  <p className="text-sm text-gray-600 mt-1">{t.header.subtitle}</p>
+                </div>
+              </div>
             </div>
             <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
               <button
@@ -607,6 +625,54 @@ export default function BillCalculator() {
                   )}
                 </div>
               </div>
+              </div>
+            )}
+
+            {/* Show Garage Spaces in Blank Form - only for blank mode */}
+            {formMode === 'blank' && (
+              <div className="md:col-span-2">
+                <h3 className="text-base font-semibold text-gray-900 mb-3">
+                  {t.form.garageSpaces}
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* Motorcycle Space Checkbox */}
+                  <div className="flex items-start gap-3 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                    <input
+                      type="checkbox"
+                      id="showMotorcycleInBlankForm"
+                      checked={billData.showMotorcycleInBlankForm ?? true}
+                      onChange={(e) => handleInputChange('showMotorcycleInBlankForm', e.target.checked)}
+                      className="cursor-pointer mt-1 w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
+                    />
+                    <label htmlFor="showMotorcycleInBlankForm" className="flex-1 cursor-pointer">
+                      <span className="block text-sm font-medium text-gray-700">
+                        {t.form.showMotorcycleInBlankForm}
+                      </span>
+                      <span className="block text-xs text-gray-500 mt-1">
+                        {t.form.showMotorcycleInBlankFormHelp}
+                      </span>
+                    </label>
+                  </div>
+
+                  {/* Car Space Checkbox */}
+                  <div className="flex items-start gap-3 p-4 bg-purple-50 rounded-lg border border-purple-200">
+                    <input
+                      type="checkbox"
+                      id="showCarInBlankForm"
+                      checked={billData.showCarInBlankForm ?? true}
+                      onChange={(e) => handleInputChange('showCarInBlankForm', e.target.checked)}
+                      className="cursor-pointer mt-1 w-4 h-4 text-purple-600 border-gray-300 rounded focus:ring-2 focus:ring-purple-500"
+                    />
+                    <label htmlFor="showCarInBlankForm" className="flex-1 cursor-pointer">
+                      <span className="block text-sm font-medium text-gray-700">
+                        {t.form.showCarInBlankForm}
+                      </span>
+                      <span className="block text-xs text-gray-500 mt-1">
+                        {t.form.showCarInBlankFormHelp}
+                      </span>
+                    </label>
+                  </div>
+                </div>
               </div>
             )}
 

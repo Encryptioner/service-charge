@@ -275,8 +275,8 @@ export default function BlankFormPreview({
               </td>
             </tr>
 
-            {/* Garage space variations - with blank spaces */}
-            {billData.garage.motorcycleSpaces > 0 && (
+            {/* Garage space variations - with blank spaces - only show if enabled */}
+            {billData.showMotorcycleInBlankForm && (
               <tr className="bg-gray-50 font-medium">
                 <td
                   colSpan={4}
@@ -290,7 +290,7 @@ export default function BlankFormPreview({
               </tr>
             )}
 
-            {billData.garage.carSpaces > 0 && (
+            {billData.showCarInBlankForm && (
               <tr className="bg-gray-50 font-medium">
                 <td
                   colSpan={4}
@@ -304,7 +304,7 @@ export default function BlankFormPreview({
               </tr>
             )}
 
-            {billData.garage.motorcycleSpaces > 0 && billData.garage.carSpaces > 0 && (
+            {billData.showMotorcycleInBlankForm && billData.showCarInBlankForm && (
               <tr className="bg-gray-50 font-medium">
                 <td
                   colSpan={4}
@@ -342,92 +342,102 @@ export default function BlankFormPreview({
         </table>
       </div>
 
-      {/* Garage Space Information - Blank Form - Always show in blank mode */}
-      <div className="mb-6">
-        <h2 className="text-lg font-bold text-gray-900 mb-3">
-          {t.summary.garageCollection}
-        </h2>
-        <div className="grid grid-cols-2 gap-3">
-          <div className="p-3 bg-gray-100 rounded border border-gray-300">
-            <h3 className="font-bold text-gray-900 mb-2 text-sm">{t.form.motorcycleSpaces}</h3>
-            <div className="space-y-1 text-xs">
-              <p>
-                <span className="font-medium">{t.summary.totalMotorcycleSpaces}:</span>
-                <span className="inline-block min-w-[60px] border-b border-gray-400 border-dashed ml-2"></span>
-              </p>
-              <p>
-                <span className="font-medium">{t.form.motorcycleSpaceAmount}:</span>
-                <span className="inline-block min-w-[80px] border-b border-gray-400 border-dashed ml-2"></span> {t.currency}
-              </p>
-              <p className="font-bold pt-1 border-t border-gray-400">
-                {t.summary.totalAmount}:
-                <span className="inline-block min-w-[100px] border-b border-gray-400 border-dashed ml-2"></span> {t.currency}
-              </p>
-              <div className="pt-1 border-t border-gray-400 mt-1">
-                <p className="font-medium">{t.form.motorcycleSpaceNotes}:</p>
-                <div className="min-h-[40px] border border-gray-300 border-dashed rounded p-1 mt-0.5"></div>
+      {/* Garage Space Information - Blank Form - Only show if either is enabled */}
+      {(billData.showMotorcycleInBlankForm || billData.showCarInBlankForm) && (
+        <>
+          <div className="mb-6">
+            <h2 className="text-lg font-bold text-gray-900 mb-3">
+              {t.summary.garageCollection}
+            </h2>
+            <div className={`grid ${billData.showMotorcycleInBlankForm && billData.showCarInBlankForm ? 'grid-cols-2' : 'grid-cols-1'} gap-3`}>
+              {billData.showMotorcycleInBlankForm && (
+                <div className="p-3 bg-gray-100 rounded border border-gray-300">
+                  <h3 className="font-bold text-gray-900 mb-2 text-sm">{t.form.motorcycleSpaces}</h3>
+                  <div className="space-y-1 text-xs">
+                    <p>
+                      <span className="font-medium">{t.summary.totalMotorcycleSpaces}:</span>
+                      <span className="inline-block min-w-[60px] border-b border-gray-400 border-dashed ml-2"></span>
+                    </p>
+                    <p>
+                      <span className="font-medium">{t.form.motorcycleSpaceAmount}:</span>
+                      <span className="inline-block min-w-[80px] border-b border-gray-400 border-dashed ml-2"></span> {t.currency}
+                    </p>
+                    <p className="font-bold pt-1 border-t border-gray-400">
+                      {t.summary.totalAmount}:
+                      <span className="inline-block min-w-[100px] border-b border-gray-400 border-dashed ml-2"></span> {t.currency}
+                    </p>
+                    <div className="pt-1 border-t border-gray-400 mt-1">
+                      <p className="font-medium">{t.form.motorcycleSpaceNotes}:</p>
+                      <div className="min-h-[40px] border border-gray-300 border-dashed rounded p-1 mt-0.5"></div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {billData.showCarInBlankForm && (
+                <div className="p-3 bg-gray-100 rounded border border-gray-300">
+                  <h3 className="font-bold text-gray-900 mb-2 text-sm">{t.form.carSpaces}</h3>
+                  <div className="space-y-1 text-xs">
+                    <p>
+                      <span className="font-medium">{t.summary.totalCarSpaces}:</span>
+                      <span className="inline-block min-w-[60px] border-b border-gray-400 border-dashed ml-2"></span>
+                    </p>
+                    <p>
+                      <span className="font-medium">{t.form.carSpaceAmount}:</span>
+                      <span className="inline-block min-w-[80px] border-b border-gray-400 border-dashed ml-2"></span> {t.currency}
+                    </p>
+                    <p className="font-bold pt-1 border-t border-gray-400">
+                      {t.summary.totalAmount}:
+                      <span className="inline-block min-w-[100px] border-b border-gray-400 border-dashed ml-2"></span> {t.currency}
+                    </p>
+                    <div className="pt-1 border-t border-gray-400 mt-1">
+                      <p className="font-medium">{t.form.carSpaceNotes}:</p>
+                      <div className="min-h-[40px] border border-gray-300 border-dashed rounded p-1 mt-0.5"></div>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {(billData.showMotorcycleInBlankForm || billData.showCarInBlankForm) && (
+              <div className="mt-3 p-2 bg-gray-200 rounded border-2 border-gray-400">
+                <p className="font-bold text-sm text-gray-900">
+                  {t.summary.totalGarageCollection}:
+                  <span className="inline-block min-w-[120px] border-b-2 border-gray-600 border-dashed ml-2"></span> {t.currency}
+                </p>
+              </div>
+            )}
+          </div>
+
+          {/* Combined Total Collection - Blank Form - Only show if garage is enabled */}
+          <div className="mb-6 p-4 bg-blue-50 rounded border-2 border-blue-300">
+            <h2 className="text-base font-bold text-gray-900 mb-3">{t.summary.combinedTotal}</h2>
+            <div className="grid grid-cols-2 gap-3 text-sm mb-3">
+              <div>
+                <p className="text-gray-600">{t.summary.totalFlatCollection}:</p>
+                <p className="font-bold text-gray-900">
+                  <span className="inline-block min-w-[100px] border-b border-gray-500 border-dashed"></span> {t.currency}
+                </p>
+              </div>
+              <div>
+                <p className="text-gray-600">{t.summary.totalGarageCollection}:</p>
+                <p className="font-bold text-gray-900">
+                  <span className="inline-block min-w-[100px] border-b border-gray-500 border-dashed"></span> {t.currency}
+                </p>
               </div>
             </div>
-          </div>
-
-          <div className="p-3 bg-gray-100 rounded border border-gray-300">
-            <h3 className="font-bold text-gray-900 mb-2 text-sm">{t.form.carSpaces}</h3>
-            <div className="space-y-1 text-xs">
-              <p>
-                <span className="font-medium">{t.summary.totalCarSpaces}:</span>
-                <span className="inline-block min-w-[60px] border-b border-gray-400 border-dashed ml-2"></span>
+            <div className="pt-3 border-t-2 border-blue-400">
+              <p className="text-gray-700 text-sm font-medium">{t.summary.flatsPlusGarage}:</p>
+              <p className="font-bold text-xl text-gray-900">
+                <span className="inline-block min-w-[150px] border-b-2 border-gray-600 border-dashed"></span> {t.currency}
               </p>
-              <p>
-                <span className="font-medium">{t.form.carSpaceAmount}:</span>
-                <span className="inline-block min-w-[80px] border-b border-gray-400 border-dashed ml-2"></span> {t.currency}
+              <p className="text-xs text-gray-600 italic mt-2">
+                {t.summary.inWords}: <span className="inline-block min-w-[300px] border-b border-gray-400 border-dashed ml-2"></span>
               </p>
-              <p className="font-bold pt-1 border-t border-gray-400">
-                {t.summary.totalAmount}:
-                <span className="inline-block min-w-[100px] border-b border-gray-400 border-dashed ml-2"></span> {t.currency}
-              </p>
-              <div className="pt-1 border-t border-gray-400 mt-1">
-                <p className="font-medium">{t.form.carSpaceNotes}:</p>
-                <div className="min-h-[40px] border border-gray-300 border-dashed rounded p-1 mt-0.5"></div>
-              </div>
             </div>
           </div>
-        </div>
-
-        <div className="mt-3 p-2 bg-gray-200 rounded border-2 border-gray-400">
-          <p className="font-bold text-sm text-gray-900">
-            {t.summary.totalGarageCollection}:
-            <span className="inline-block min-w-[120px] border-b-2 border-gray-600 border-dashed ml-2"></span> {t.currency}
-          </p>
-        </div>
-      </div>
-
-      {/* Combined Total Collection - Blank Form - Always show */}
-      <div className="mb-6 p-4 bg-blue-50 rounded border-2 border-blue-300">
-        <h2 className="text-base font-bold text-gray-900 mb-3">{t.summary.combinedTotal}</h2>
-        <div className="grid grid-cols-2 gap-3 text-sm mb-3">
-          <div>
-            <p className="text-gray-600">{t.summary.totalFlatCollection}:</p>
-            <p className="font-bold text-gray-900">
-              <span className="inline-block min-w-[100px] border-b border-gray-500 border-dashed"></span> {t.currency}
-            </p>
-          </div>
-          <div>
-            <p className="text-gray-600">{t.summary.totalGarageCollection}:</p>
-            <p className="font-bold text-gray-900">
-              <span className="inline-block min-w-[100px] border-b border-gray-500 border-dashed"></span> {t.currency}
-            </p>
-          </div>
-        </div>
-        <div className="pt-3 border-t-2 border-blue-400">
-          <p className="text-gray-700 text-sm font-medium">{t.summary.flatsPlusGarage}:</p>
-          <p className="font-bold text-xl text-gray-900">
-            <span className="inline-block min-w-[150px] border-b-2 border-gray-600 border-dashed"></span> {t.currency}
-          </p>
-          <p className="text-xs text-gray-600 italic mt-2">
-            {t.summary.inWords}: <span className="inline-block min-w-[300px] border-b border-gray-400 border-dashed ml-2"></span>
-          </p>
-        </div>
-      </div>
+        </>
+      )}
 
       {/* Payment Info */}
       {billData.paymentInfo && (
