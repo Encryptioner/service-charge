@@ -84,6 +84,8 @@ Mobile Banking: _____________________`,
   notes: `Important Notes:
 Payment Due Date: _____________________
 Contact for queries: _____________________`,
+  showMotorcycleInBlankForm: true,
+  showCarInBlankForm: true,
   categories: [
     {
       id: '1',
@@ -194,6 +196,8 @@ const blankExampleDataBn: BillData = {
   notes: `গুরুত্বপূর্ণ নোট:
 পেমেন্টের শেষ তারিখ: _____________________
 যোগাযোগ: _____________________`,
+  showMotorcycleInBlankForm: true,
+  showCarInBlankForm: true,
   categories: [
     {
       id: '1',
