@@ -11,7 +11,7 @@
 // ── Configuration ────────────────────────────────────────────
 
 export const GOOGLE_ANALYTICS_CONFIG = {
-  measurementId: 'G-J9DK22GGZC',
+  measurementId: 'G-K0KYYY154BE',
 
   /** Privacy-first: disabled by default */
   enabled: false,
