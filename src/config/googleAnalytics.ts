@@ -13,8 +13,8 @@
 export const GOOGLE_ANALYTICS_CONFIG = {
   measurementId: 'G-K0KYYY154BE',
 
-  /** Privacy-first: disabled by default */
-  enabled: false,
+  /** Privacy-first events only (see taxonomy below) — no PII, ever */
+  enabled: true,
 
   /** Set to true to test analytics locally */
   trackInDevelopment: false,

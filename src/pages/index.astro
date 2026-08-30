@@ -53,6 +53,16 @@ import '../styles/global.css';
 
     <!-- Theme Color -->
     <meta name="theme-color" content="#2563eb" />
+
+    <!-- Google Analytics 4 — Encryptioner Websites property.
+         Loader lives here; typed events come from src/config/googleAnalytics.ts. -->
+    <script is:inline async src="https://www.googletagmanager.com/gtag/js?id=G-K0KYYY154BE"></script>
+    <script is:inline>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-K0KYYY154BE');
+    </script>
   </head>
   <body>
     <App client:load />
